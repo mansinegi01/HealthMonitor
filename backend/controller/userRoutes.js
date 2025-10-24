@@ -6,7 +6,9 @@ async function loginUser(req,res){
     if(!findUser){
         return res.status(404).json({message : "user not found"});
     }
-    return res.status(200).json({ message: "login done" });
+    return res.status(200).json({
+        user : {name : findUser.name, email : findUser.email}
+    });
 }
 
 
@@ -23,7 +25,7 @@ async function signupUser(req,res) {
         })
 
         return res.status(201).json({
-            msg : "new entry created"
+           msg : "new entry created "
         })
     } catch (err) {
         return res.status(500).json({ error: "Database error", details: err.message });

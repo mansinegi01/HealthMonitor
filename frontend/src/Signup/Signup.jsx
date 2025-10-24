@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+import two from '../assets/two.jpg'
+import three from '../assets/three.jpg'
+
 function Signup() {
   const [user, setUser] = useState({
     name: "",
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,8 +21,6 @@ function Signup() {
       [name]: value,
     }));
   };
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,112 +35,102 @@ function Signup() {
 
       const data = await response.json();
       console.log("Signup successful:", data);
-      if (response.status === 201) {
-        navigate("/login");
-      } else {
-        alert(data.message || "Signup failed");
-      }
+      if (response.status === 201) navigate("/login");
     } catch (error) {
       console.log("Signup error:", error);
     }
   };
 
   return (
-    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-100 via-blue-100 to-cyan-100 overflow-hidden">
-
-      {/* Floating animated icons */}
+    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 overflow-hidden">
+      
+      {/* ✨ Animated Background Images */}
       <motion.img
-        src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png"
-        alt="decor"
-        className="absolute w-14 top-10 left-20 opacity-70"
-        animate={{ y: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 4 }}
-      />
-      <motion.img
-        src="https://cdn-icons-png.flaticon.com/512/888/888859.png"
-        alt="decor"
-        className="absolute w-16 bottom-10 right-20 opacity-70"
-        animate={{ y: [0, -20, 0] }}
-        transition={{ repeat: Infinity, duration: 5 }}
-      />
-      <motion.img
-        src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png"
-        alt="decor"
-        className="absolute w-12 top-1/3 right-10 opacity-70"
-        animate={{ x: [0, 15, 0] }}
-        transition={{ repeat: Infinity, duration: 3 }}
+        src={two}
+        alt="Planet"
+        className="absolute w-40 h-40 opacity-50 top-50 left-10"
+        animate={{ x: [0,345, 0] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Glassmorphic Signup Card */}
+      <motion.img
+        src={three}
+        alt="Road"
+        className="absolute w-52 h-52 opacity-40 bottom-10 right-10 rounded-full"
+        animate={{ x: [0, -300, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      />
+
+     
+      {/* 🌌 Signup Form Card */}
       <motion.form
         onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: 40 }}
+        className="relative z-10 w-full max-w-md p-10 rounded-3xl shadow-lg bg-white/10 backdrop-blur-md border border-gray-700"
+        initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl p-10 w-11/12 md:w-1/2 lg:w-1/3"
+        transition={{ duration: 1 }}
       >
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-          Create Account ✨
+        <h2 className="text-3xl font-bold text-center text-white mb-6">
+          Create Account 🌟
         </h2>
 
         <div className="mb-4">
-          <label htmlFor="name" className="block font-medium text-gray-700">
+          <label htmlFor="name" className="block text-gray-300 mb-2">
             Full Name
           </label>
           <input
             type="text"
             id="name"
             name="name"
-            required
             value={user.name}
             onChange={handleChange}
-            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="email" className="block font-medium text-gray-700">
+          <label htmlFor="email" className="block text-gray-300 mb-2">
             Email Address
           </label>
           <input
             type="email"
             id="email"
             name="email"
-            required
             value={user.email}
             onChange={handleChange}
-            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
           />
-          <p className="text-sm text-gray-500 mt-1">
-            We'll never share your email with anyone else.
-          </p>
         </div>
 
         <div className="mb-6">
-          <label htmlFor="password" className="block font-medium text-gray-700">
+          <label htmlFor="password" className="block text-gray-300 mb-2">
             Password
           </label>
           <input
             type="password"
             id="password"
             name="password"
-            required
             value={user.password}
             onChange={handleChange}
-            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
           />
         </div>
 
-        <button
+        <motion.button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-lg transition-all duration-300"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
         >
           Sign Up
-        </button>
+        </motion.button>
 
-        <p className="text-center mt-4 text-sm text-gray-700">
-          Already have an account?
-          <Link to="/login" className="text-blue-600 hover:underline ml-1">
+        <p className="text-center text-gray-400 mt-4">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-400 hover:underline">
             Login
           </Link>
         </p>
