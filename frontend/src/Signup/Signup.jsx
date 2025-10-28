@@ -35,7 +35,7 @@ function Signup() {
 
       const data = await response.json();
       console.log("Signup successful:", data);
-      if (response.status === 201) navigate("/login");
+      if (response.status === 201) navigate("/question");
     } catch (error) {
       console.log("Signup error:", error);
     }

@@ -9,6 +9,7 @@ import About from './About/About'
 import Contact from './Contact/Contact'
 import Header from './Header/Header'
 import GetStart from './GetStart/GetStart'
+import Question from './Questions/Question'
 function App() {
 
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='signup' element={<Signup/>}></Route>
           <Route path='about' element={<About/>}></Route>
           <Route path='contact' element={<Contact/>}></Route>
+          <Route path='question' element={<Question/>}></Route>
         </Route>
        </Routes>
     </>
