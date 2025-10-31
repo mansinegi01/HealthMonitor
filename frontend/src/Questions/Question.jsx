@@ -68,6 +68,7 @@ function Question() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-black">
+            
             <input
               type="number"
               name="weight"
