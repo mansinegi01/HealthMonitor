@@ -10,6 +10,7 @@ import Contact from './Contact/Contact'
 import Header from './Header/Header'
 import GetStart from './GetStart/GetStart'
 import Question from './Questions/Question'
+import Profile from './Profile/Profile'
 function App() {
 
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path='about' element={<About/>}></Route>
           <Route path='contact' element={<Contact/>}></Route>
           <Route path='question' element={<Question/>}></Route>
+          <Route path='profile' element={<Profile/>}></Route>
         </Route>
        </Routes>
     </>
