@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Heart, Droplets, Activity, Lock } from "lucide-react";
 import {Link} from "react-router-dom"
 const Profile = () => {
+  const location = useLocation();
+  const user = location.state?.user;
   const [healthData, setHealthData] = useState({
     weight: "",
     heartRate: "",
@@ -15,7 +17,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white mt-10 px-8 py-12">
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">Profile</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-2">{user?.name || "Guest"}</h1>
       <p className="text-gray-600 mb-8">Track your health metrics over time</p>
 
       {/* Health Cards */}

@@ -2,6 +2,7 @@ const express = require('express')
 const app = express();
 const {connectDB} = require('./connectDB/connectDB')
 const routes = require('./routes/userRoutes')
+const userHealthRoutes = require('./routes/userHealthRoutes')
 const cors = require('cors')
 const cookieParser = require("cookie-parser");
 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({extended:false}))
 
 //routes
 app.use("/api",routes)
+app.use("/",userHealthRoutes)
 
 
 
