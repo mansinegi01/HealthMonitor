@@ -1,11 +1,9 @@
-const express = require('express')
-const userHealthData = require('../model/userHealth.js')
 
-
-async function setUserHealth(){
+async function setUserHealth(req, res) {
   try {
+    console.log("📩 Incoming data:", req.body);  
+
     const {
-      userId,
       weight,
       heartRate,
       systolic,
@@ -15,11 +13,7 @@ async function setUserHealth(){
       notes,
     } = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-    await userHealthData.create({
-      userId,
+    const healthData = await userHealth.create({
       weight,
       heartRate,
       systolic,
@@ -29,6 +23,7 @@ async function setUserHealth(){
       notes,
     });
 
+    console.log(" Saved data:", healthData); 
 
     return res.status(201).json({
       success: true,
@@ -36,16 +31,13 @@ async function setUserHealth(){
       data: healthData,
     });
   } catch (error) {
-    console.error("Error saving health data:", error);
+    console.error(" Error saving health data:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to save health data",
       error: error.message,
     });
   }
-};
-
-
-module.exports = {
-    setUserHealth
 }
+
+module.exports = { setUserHealth };

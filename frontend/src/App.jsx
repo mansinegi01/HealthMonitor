@@ -11,6 +11,8 @@ import Header from './Header/Header'
 import GetStart from './GetStart/GetStart'
 import Question from './Questions/Question'
 import Profile from './Profile/Profile'
+import Notes from './Notes/Notes'
+import DisplayNotes from './Notes/DisplayNotes'
 function App() {
 
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path='contact' element={<Contact/>}></Route>
           <Route path='question' element={<Question/>}></Route>
           <Route path='profile' element={<Profile/>}></Route>
+          <Route path='notes' element={<Notes/>}></Route>
+          <Route path='displayNotes' element={<DisplayNotes/>}></Route>
         </Route>
        </Routes>
     </>

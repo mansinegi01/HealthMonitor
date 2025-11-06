@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Activity } from "lucide-react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Questions = ({ onCancel }) => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     weight: "",
     heartRate: "",
@@ -18,50 +20,47 @@ const Questions = ({ onCancel }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:8000/userProfile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Send the data in JSON format
-      body: JSON.stringify(formData),
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:8000/healthProfile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    
+      const data = await res.json();
 
-    const data = await res.json();
-    if(res.status == 201)navigate("/profile")
+      if (res.status === 201) navigate("/home", { state: { user: data.user } });
 
-    // Reset form after submission
-    setFormData({
-      weight: "",
-      heartRate: "",
-      systolic: "",
-      diastolic: "",
-      glucose: "",
-      waterIntake: "",
-      notes: "",
-    });
-  } catch (error) {
-    console.error("❌ Error:", error);
-    alert("❌ Failed to save data.");
-  }
-};
-
+      // Reset form after submission
+      setFormData({
+        weight: "",
+        heartRate: "",
+        systolic: "",
+        diastolic: "",
+        glucose: "",
+        waterIntake: "",
+        notes: "",
+      });
+    } catch (error) {
+      console.error("❌ Error:", error);
+      alert("❌ Failed to save data.");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex justify-center items-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex justify-center items-center px-4 py-8 text-black">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-md border border-gray-100 p-8">
         <div className="flex items-center mb-6">
           <div className="bg-gradient-to-r from-blue-500 to-cyan-400 p-2 rounded-full">
             <Activity className="text-white w-6 h-6" />
           </div>
           <div className="ml-3">
-            <h2 className="text-2xl font-bold text-gray-800">Record Health Data</h2>
-            <p className="text-gray-500 text-sm">Track your daily health metrics</p>
+            <h2 className="text-2xl font-bold text-gray-900">Record Health Data</h2>
+            <p className="text-gray-600 text-sm">Track your daily health metrics</p>
           </div>
         </div>
 
@@ -76,28 +75,28 @@ const handleSubmit = async (e) => {
               { name: "waterIntake", label: "Water Intake (L)", placeholder: "e.g. 2.5" },
             ].map((field) => (
               <div key={field.name}>
-                <label className="block text-gray-700 font-medium mb-1">{field.label}</label>
+                <label className="block text-gray-800 font-medium mb-1">{field.label}</label>
                 <input
                   type="number"
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleChange}
                   placeholder={field.placeholder}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
                 />
               </div>
             ))}
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Notes (optional)</label>
+            <label className="block text-gray-800 font-medium mb-1">Notes (optional)</label>
             <textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               rows="3"
               placeholder="Any additional observations..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none"
             ></textarea>
           </div>
 
@@ -108,7 +107,6 @@ const handleSubmit = async (e) => {
             >
               Save Health Data
             </button>
-            
           </div>
         </form>
       </div>

@@ -1,4 +1,3 @@
-const express = require('express')
 const userData = require('../model/user')
 async function loginUser(req,res){
     const {email,password} = req.body;

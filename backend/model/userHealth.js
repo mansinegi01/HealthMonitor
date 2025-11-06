@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const userHealth = mongoose.model("userData",userSchema);
+const userHealth = mongoose.model("userHealth",userSchema);
 module.exports = userHealth;
 
 

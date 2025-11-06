@@ -1,28 +1,22 @@
-import { useLocation } from "react-router-dom";
+
+import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
-import { MessageCircle } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { MessageCircle, Activity, Heart, Moon, Utensils, FileText } from "lucide-react";
 
 function Home() {
   const location = useLocation();
+  const navigate = useNavigate(); 
   const user = location.state?.user;
 
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [dailyMoodData, setDailyMoodData] = useState([]); // stores moods over days
+  const [dailyMoodData, setDailyMoodData] = useState([]);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   const chatEndRef = useRef(null);
 
-  // Map moods to numeric values
   const moodValueMap = {
     "Happy 😊": 5,
     "Excited 🤩": 4,
@@ -32,26 +26,55 @@ function Home() {
     "Anxious 😟": 0,
   };
 
-  // Predefined feelings
   const feelings = ["Happy 😊", "Excited 🤩", "Good 🙂", "Tired 😴", "Sad 😢", "Anxious 😟"];
 
-  // Scroll chatbot to bottom
+  const motivationalQuotesByMood = {
+    "Tired 😴": [
+      "Rest when you need to, but don’t quit. 🌙",
+      "Even slow progress is progress. 💪",
+      "Your body achieves what your mind believes. 🧘‍♀️",
+      "Energy flows where focus goes. ✨",
+    ],
+    "Sad 😢": [
+      "Every day may not be good, but there’s something good in every day. 💖",
+      "You’ve survived 100% of your bad days so far. 🌈",
+      "It’s okay to not be okay — better days are coming. ☀️",
+      "You are stronger than you feel right now. 💫",
+    ],
+    "Anxious 😟": [
+      "Breathe. You’ve got this. 🌿",
+      "Peace begins with one deep breath. 🌸",
+      "Don’t believe everything you think. 🧠",
+      "You are safe, calm, and in control. 🌤️",
+    ],
+  };
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isChatOpen]);
 
-  // When user selects mood
   const handleFeelingClick = (feeling) => {
-    const today = new Date().toLocaleDateString("en-US", { weekday: "short" }); // Mon, Tue, etc.
+    const today = new Date().toLocaleDateString("en-US", { weekday: "short" });
     const newEntry = { day: today, mood: moodValueMap[feeling] || 3 };
 
     setDailyMoodData((prev) => {
-      // Replace existing entry for today if exists
       const filtered = prev.filter((item) => item.day !== today);
       return [...filtered, newEntry];
     });
 
-    // Chatbot message
+    let popupText = "";
+
+    if (["Happy 😊", "Excited 🤩", "Good 🙂"].includes(feeling)) {
+      popupText = "Nice! Let’s move forward 😄";
+    } else {
+      const quotes = motivationalQuotesByMood[feeling];
+      popupText = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    setPopupMessage(popupText);
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3000);
+
     setMessages((prev) => [...prev, { type: "user", text: feeling }]);
     setTimeout(() => {
       setMessages((prev) => [
@@ -71,10 +94,12 @@ function Home() {
   };
 
   return (
-    <div className="p-5 mt-20 flex flex-col items-center gap-8">
+    <div className="p-5 mt-20 flex flex-col items-center gap-10 relative">
       {/* Greeting */}
-      <h1 className="text-3xl font-bold">Hello, {user?.name || "Guest"}!</h1>
-      <p className="text-gray-700 mb-6">How are you feeling today?</p>
+      <h1 className="text-3xl font-bold text-indigo-600">
+        Hello, {user?.name || "Guest"} 👋
+      </h1>
+      <p className="text-gray-700 mb-6 text-lg">How are you feeling today?</p>
 
       {/* Mood Buttons */}
       <div className="flex flex-wrap gap-4 justify-center mb-10">
@@ -89,23 +114,81 @@ function Home() {
         ))}
       </div>
 
-      {/* Single Line Chart for Daily Mood */}
-      {dailyMoodData.length > 0 && (
-        <div className="w-full max-w-xl bg-white p-4 rounded-xl shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Your Daily Mood</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={dailyMoodData.sort((a, b) => a.day.localeCompare(b.day))}>
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <XAxis dataKey="day" />
-              <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} />
-              <Tooltip />
-              <Line type="monotone" dataKey="mood" stroke="#6366F1" strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
+      {/* Popup */}
+      {showPopup && (
+        <div className="fixed top-24 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg text-center animate-bounce z-50">
+          {popupMessage}
         </div>
       )}
 
-      {/* Chatbot Toggle */}
+      {/* Card Sections */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10 max-w-5xl justify-center items-stretch">
+        {/* Quick Actions */}
+        <div className="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg h-full flex flex-col justify-between min-h-[250px]">
+          <h3 className="text-xl font-bold mb-3">⚡ Quick Actions</h3>
+          <div className="flex flex-col space-y-3">
+            <button className="flex items-center gap-2 hover:underline">
+              <Activity size={18} /> Track Activity
+            </button>
+            <button className="flex items-center gap-2 hover:underline">
+              <FileText size={18} /> View Reports
+            </button>
+            <button className="flex items-center gap-2 hover:underline">
+              <Utensils size={18} /> Diet Plans
+            </button>
+          </div>
+        </div>
+
+        {/* Wellness Notes */}
+        <div className="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg h-full flex flex-col justify-between min-h-[280px]">
+          <div>
+            <h3 className="text-xl font-bold mb-3">📝 Wellness Notes</h3>
+            <p className="text-sm text-pink-100 mb-4">
+              Reflect on your emotions — note how you feel and see your growth 💫
+            </p>
+          </div>
+
+          <div className="flex flex-col space-y-3">
+            <button
+              className="bg-white text-pink-600 font-semibold py-2 rounded-xl hover:bg-pink-100 transition-transform transform hover:scale-105 shadow-md"
+              onClick={() => navigate("/notes")}
+            >
+              🌈 How was today?
+            </button>
+           
+            
+          </div>
+        </div>
+
+        {/* Workout Videos */}
+        <div className="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg h-full flex flex-col justify-between min-h-[250px]">
+          <h3 className="text-xl font-bold mb-3">🏋️ Workout Videos</h3>
+          <p className="text-sm text-green-100 mb-4">
+            Boost your mood with curated fitness and yoga sessions 💪
+          </p>
+
+          <div className="flex flex-col space-y-3">
+            <a
+              href="https://www.youtube.com/results?search_query=10+minute+abs+workout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-green-600 font-semibold py-2 rounded-xl text-center hover:bg-green-100 transition-transform transform hover:scale-105 shadow-md"
+            >
+              🔥 Home Workouts
+            </a>
+            <a
+              href="https://www.youtube.com/results?search_query=stretching+routine"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-green-600 font-semibold py-2 rounded-xl text-center hover:bg-green-100 transition-transform transform hover:scale-105 shadow-md"
+            >
+              🧘 Yoga
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Chatbot */}
       <div className="fixed bottom-5 right-5 z-50">
         <button
           onClick={() => setIsChatOpen(!isChatOpen)}
