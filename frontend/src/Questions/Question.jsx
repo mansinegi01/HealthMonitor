@@ -23,7 +23,7 @@ const Questions = ({ onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8000/healthProfile", {
+      const res = await fetch("http://localhost:8000/api/health/sethealthProfile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +33,7 @@ const Questions = ({ onCancel }) => {
 
       const data = await res.json();
 
-      if (res.status === 201) navigate("/home", { state: { user: data.user } });
+      if (res.status === 201) navigate("/profile", { state: { user: data.user } });
 
       // Reset form after submission
       setFormData({

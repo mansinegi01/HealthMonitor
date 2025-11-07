@@ -1,47 +1,43 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema(
+const userHealthSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Assuming you have a separate User model
-      required: true,
+      ref: "User",
+      required: false, // optional for now
     },
     weight: {
       type: Number, // in kg
       required: false,
     },
     heartRate: {
-      type: Number, // in beats per minute
+      type: Number, // bpm
       required: false,
     },
     systolic: {
-      type: Number, // upper blood pressure reading
+      type: Number, // BP upper
       required: false,
     },
     diastolic: {
-      type: Number, // lower blood pressure reading
+      type: Number, // BP lower
       required: false,
     },
     glucose: {
-      type: Number, // in mg/dL
+      type: Number, // mg/dL
       required: false,
     },
     waterIntake: {
-      type: Number, // in liters
+      type: Number, // liters
       required: false,
     },
     notes: {
-      type: String, // optional health remarks
+      type: String,
       trim: true,
     },
   },
-  {
-    timestamps: true, // automatically adds createdAt & updatedAt
-  }
+  { timestamps: true }
 );
 
-const userHealth = mongoose.model("userHealth",userSchema);
-module.exports = userHealth;
-
-
+const UserHealth = mongoose.model("UserHealth", userHealthSchema);
+module.exports = UserHealth;

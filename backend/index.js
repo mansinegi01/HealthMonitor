@@ -64,7 +64,7 @@ connectDB("mongodb://127.0.0.1:27017/healthMonitor");
 
 // Routes
 app.use("/api", routes);
-app.use("/", userHealthRoutes);
+app.use("/api/health", userHealthRoutes);
 app.use("/api/notes", userNotesRoutes); 
 
 // Server
