@@ -20,36 +20,67 @@ const Questions = ({ onCancel }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:8000/api/health/sethealthProfile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await fetch("http://localhost:8000/api/health/sethealthProfile", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
 
-      const data = await res.json();
+  //     const data = await res.json();
 
-      if (res.status === 201) navigate("/profile", { state: { user: data.user } });
+  //     if (res.status === 201) navigate("/profile", { state: { user: data.user } });
+  //     if (res.status === 401) navigate("/login");
+  //     alert("please login first")
 
-      // Reset form after submission
-      setFormData({
-        weight: "",
-        heartRate: "",
-        systolic: "",
-        diastolic: "",
-        glucose: "",
-        waterIntake: "",
-        notes: "",
-      });
-    } catch (error) {
-      console.error("❌ Error:", error);
-      alert("❌ Failed to save data.");
+  //     // Reset form after submission
+  //     setFormData({
+  //       weight: "",
+  //       heartRate: "",
+  //       systolic: "",
+  //       diastolic: "",
+  //       glucose: "",
+  //       waterIntake: "",
+  //       notes: "",
+  //     });
+  //   } catch (error) {
+  //     console.error("❌ Error:", error);
+  //     alert("❌ Failed to save data.");
+  //   }
+  // };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem("token"); // ✅ get token
+
+    const res = await fetch("http://localhost:8000/api/health/sethealthProfile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // ✅ send token
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("✅ Health data saved successfully!");
+      navigate("/profile", { state: { user: data.user } });
+    } else if (res.status === 401) {
+      alert("⚠️ Please log in first");
+      navigate("/login");
     }
-  };
+  } catch (error) {
+    console.error("❌ Error:", error);
+    alert("❌ Failed to save data.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex justify-center items-center px-4 py-8 text-black">

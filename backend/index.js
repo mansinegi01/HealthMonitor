@@ -46,6 +46,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { connectDB } = require('./connectDB/connectDB');
+const {restrictUser} = require("./middlewares/auth")
 
 const routes = require('./routes/userRoutes');
 const userHealthRoutes = require('./routes/userHealthRoutes');
@@ -64,10 +65,10 @@ connectDB("mongodb://127.0.0.1:27017/healthMonitor");
 
 // Routes
 app.use("/api", routes);
-app.use("/api/health", userHealthRoutes);
-app.use("/api/notes", userNotesRoutes); 
+app.use("/api/health",restrictUser, userHealthRoutes);
+app.use("/api/notes",restrictUser, userNotesRoutes); 
 
 // Server
 app.listen(port, () => {
-  console.log(`✅ Server running on http://localhost:${port}`);
+  console.log(` Server running on http://localhost:${port}`);
 });

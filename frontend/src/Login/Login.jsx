@@ -12,22 +12,51 @@ function Login() {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(user),
-      });
-      const data = await response.json();
-      if (response.status === 200) navigate('/home',{ state : {user : data.user}});
-      else alert(data.message || "Invalid credentials");
-    } catch (error) {
-      console.log("Login error:", error);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await fetch("http://localhost:8000/api/login", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       credentials: "include",
+  //       body: JSON.stringify(user),
+  //     });
+  //     const data = await response.json();
+  //     if (response.status === 200) navigate('/home',{ state : {user : data.user}});
+  //     else if (response.status === 401) navigate('/signup');
+  //     else alert(data.message || "Invalid credentials");
+  //   } catch (error) {
+  //     console.log("Login error:", error);
+  //   }
+  // };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch("http://localhost:8000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(user),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      // ✅ Save token to localStorage for future requests
+      localStorage.setItem("token", data.token);
+
+      // ✅ Pass user to home
+      navigate("/home", { state: { user: data.user } });
+    } else if (response.status === 401) {
+      alert("Invalid credentials");
+      navigate("/signup");
+    } else {
+      alert(data.message || "Something went wrong");
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+  }
+};
 
   return (
     <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 overflow-hidden text-white">
