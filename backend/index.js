@@ -1,46 +1,4 @@
-// const express = require('express')
-// const app = express();
-// const {connectDB} = require('./connectDB/connectDB')
-// const routes = require('./routes/userRoutes')
-// const userHealthRoutes = require('./routes/userHealthRoutes')
-// const userNotesRoutes = require('./routes/userNotesRoutes')
-// const cors = require('cors')
-// const cookieParser = require("cookie-parser");
 
-
-// const port = process.env.PORT || 8000;
-
-
-// //Cors
-// let corsOption = {
-//     origin : "http://localhost:5173",
-//     methods : "GET, POST, PUT, PATCH, DELETE",
-//     credentials : true
-// }
-
-// //ConnectDB
-// connectDB("mongodb://127.0.0.1:27017/healthMonitor")
-
-// //middlewares
-// app.use(cookieParser());
-// app.use(cors(corsOption))
-// app.use(express.json())
-// app.use(express.urlencoded({extended:false}))
-
-// //routes
-// app.use("/api",routes)
-// app.use("/",userHealthRoutes)
-// app.use("/api/notes",userNotesRoutes)
-
-
-
-
-
-// //listen
-// app.listen(port,()=>{
-//     console.log(`server started`);
-    
-// })
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -51,6 +9,7 @@ const {restrictUser} = require("./middlewares/auth")
 const routes = require('./routes/userRoutes');
 const userHealthRoutes = require('./routes/userHealthRoutes');
 const userNotesRoutes = require('./routes/userNotesRoutes'); 
+const userPostsRoutes = require("./routes/userPosts");
 
 const port = process.env.PORT || 8000;
 
@@ -67,6 +26,7 @@ connectDB("mongodb://127.0.0.1:27017/healthMonitor");
 app.use("/api", routes);
 app.use("/api/health",restrictUser, userHealthRoutes);
 app.use("/api/notes",restrictUser, userNotesRoutes); 
+app.use("/api/posts",restrictUser, userPostsRoutes); 
 
 // Server
 app.listen(port, () => {

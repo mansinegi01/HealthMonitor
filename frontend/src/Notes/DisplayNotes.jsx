@@ -8,21 +8,35 @@ function DisplayNotes() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/api/notes/getNotes");
-        setNotes(res.data || []);
-      } catch (err) {
-        console.error("Error fetching notes:", err);
-        setError("Failed to load notes 😢");
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchNotes = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    fetchNotes();
-  }, []);
+      if (!token) {
+        alert("Please log in first");
+        navigate("/login");
+        return;
+      }
+
+      const res = await axios.get("http://localhost:8000/api/notes/getNotes", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      setNotes(res.data || []);
+    } catch (err) {
+      console.error("Error fetching notes:", err);
+      setError("Failed to load notes 😢");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchNotes();
+}, []);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 p-6">
