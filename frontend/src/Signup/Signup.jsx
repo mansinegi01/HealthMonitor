@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-
-import two from '../assets/two.jpg'
-import three from '../assets/three.jpg'
+import bg from "../assets/yoga-4849681_1280.jpg"; 
 
 function Signup() {
   const [user, setUser] = useState({
@@ -36,47 +34,48 @@ function Signup() {
       const data = await response.json();
       console.log("Signup successful:", data);
       if (response.status === 201) navigate("/question");
-      else if(response.status === 409) navigate("/login")
+      else if (response.status === 409) navigate("/login");
     } catch (error) {
       console.log("Signup error:", error);
     }
   };
 
   return (
-    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 overflow-hidden">
-      
-      {/* ✨ Animated Background Images */}
-      <motion.img
-        src={two}
-        alt="Planet"
-        className="absolute w-40 h-40 opacity-50 top-50 left-10"
-        animate={{ x: [0,345, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-      />
+    <div
+      className="relative flex justify-center items-center min-h-screen overflow-hidden text-gray-900"
+      style={{
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* 🌤️ Light Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-blue-50/70 to-indigo-50/60 backdrop-blur-sm"></div>
 
-      <motion.img
-        src={three}
-        alt="Road"
-        className="absolute w-52 h-52 opacity-40 bottom-10 right-10 rounded-full"
-        animate={{ x: [0, -300, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      />
+      {/* ✨ Soft Gradient Blurs */}
+      <div className="absolute top-10 left-20 w-72 h-72 bg-blue-300 rounded-full blur-[140px] opacity-40 animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-72 h-72 bg-indigo-300 rounded-full blur-[140px] opacity-40 animate-pulse"></div>
 
-     
-      {/* 🌌 Signup Form Card */}
+      {/* 🪷 Signup Form Card */}
       <motion.form
         onSubmit={handleSubmit}
-        className="relative z-10 w-full max-w-md p-10 rounded-3xl shadow-lg bg-white/10 backdrop-blur-md border border-gray-700"
+        className="relative z-10 w-full max-w-md p-10 rounded-3xl shadow-2xl bg-white/95 backdrop-blur-md border border-gray-200"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        <h2 className="text-3xl font-bold text-center text-white mb-6">
-          Create Account 🌟
+        <h2 className="text-3xl font-bold text-center text-indigo-600 mb-6 tracking-wide">
+          Create Account 🌸
         </h2>
 
+        <p className="text-center text-gray-500 mb-6 text-sm">
+          Join <span className="font-semibold text-indigo-600">HealthMonitor</span> and begin your journey to wellness.
+        </p>
+
+        {/* Full Name */}
         <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-300 mb-2">
+          <label htmlFor="name" className="block text-gray-700 mb-2 font-medium">
             Full Name
           </label>
           <input
@@ -86,12 +85,14 @@ function Signup() {
             value={user.name}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
+            placeholder="John Doe"
+            className="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400/50 shadow-sm"
           />
         </div>
 
+        {/* Email */}
         <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-300 mb-2">
+          <label htmlFor="email" className="block text-gray-700 mb-2 font-medium">
             Email Address
           </label>
           <input
@@ -101,12 +102,14 @@ function Signup() {
             value={user.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
+            placeholder="you@example.com"
+            className="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400/50 shadow-sm"
           />
         </div>
 
+        {/* Password */}
         <div className="mb-6">
-          <label htmlFor="password" className="block text-gray-300 mb-2">
+          <label htmlFor="password" className="block text-gray-700 mb-2 font-medium">
             Password
           </label>
           <input
@@ -116,22 +119,25 @@ function Signup() {
             value={user.password}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-400/50"
+            placeholder="••••••••"
+            className="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400/50 shadow-sm"
           />
         </div>
 
+        {/* Submit Button */}
         <motion.button
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
-          className="w-full py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+          className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
         >
           Sign Up
         </motion.button>
 
-        <p className="text-center text-gray-400 mt-4">
+        {/* Login Redirect */}
+        <p className="text-center text-gray-500 mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-400 hover:underline">
+          <Link to="/login" className="text-indigo-600 hover:underline font-medium">
             Login
           </Link>
         </p>

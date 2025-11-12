@@ -29,7 +29,7 @@ function Header() {
           alt="logo"
           className="w-10 h-10"
         />
-        <h1 className="text-white text-xl font-bold">Mental Wellbeing</h1>
+        <h1 className="text-white text-xl font-bold">MindNest</h1>
       </div>
 
       {/* Right Side: Profile + Hamburger */}

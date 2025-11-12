@@ -18,6 +18,12 @@ import Reports from './QuickActioons/Reports'
 import PlayGames from './QuickActioons/PlayGames'
 import Community from './QuickActioons/Community'
 import Chatbot from './QuickActioons/Chatbot'
+import Workout from './QuickActioons/Workout'
+import Audio from './Therapies/Audio'
+import Consult from './Therapies/Consult'
+import Reading from './Therapies/Reading'
+import Talking from './Therapies/Talking'
+import Yoga from './Therapies/Yoga'
 
 function App() {
 
@@ -43,7 +49,13 @@ function App() {
             <Route path='therapy' element={<Therapy />}></Route>
             <Route path='reports' element={<Reports />}></Route>
             <Route path='community' element={<Community />}></Route>
+            <Route path='workout' element={<Workout />}></Route>
             <Route path='chatbot' element={<Chatbot />}></Route>
+            <Route path='Audio' element={<Audio />}></Route>
+            <Route path='consult' element={<Consult />}></Route>
+            <Route path='therapies/reading' element={<Reading />}></Route>
+            <Route path='talking' element={<Talking />}></Route>
+            <Route path='yoga' element={<Yoga />}></Route>
           </Route>
         </Routes>
       
