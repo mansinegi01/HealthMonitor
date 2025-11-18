@@ -1,6 +1,7 @@
 import './App.css'
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
+import ProtectedRoute from './ProtectedRoutes/ProtectedRoutes'
 import Login from './Login/Login'
 import Signup from './Signup/Signup'
 import Layout from "../src/Layout/Layout"
@@ -33,30 +34,154 @@ function App() {
 
 
         <Routes>
-          <Route path='/' element={<Layout />}>
+          <Route path="/" element={<Layout />}>
 
-            <Route path='' element={<GetStart />} />
-            <Route path='home' element={<Home />} />
-            <Route path='login' element={<Login />}></Route>
-            <Route path='signup' element={<Signup />}></Route>
-            <Route path='about' element={<About />}></Route>
-            <Route path='contact' element={<Contact />}></Route>
-            <Route path='question' element={<Question />}></Route>
-            <Route path='profile' element={<Profile />}></Route>
-            <Route path='notes' element={<Notes />}></Route>
-            <Route path='displayNotes' element={<DisplayNotes />}></Route>
-            <Route path='playGames' element={<PlayGames />}></Route>
-            <Route path='therapy' element={<Therapy />}></Route>
-            <Route path='reports' element={<Reports />}></Route>
-            <Route path='community' element={<Community />}></Route>
-            <Route path='workout' element={<Workout />}></Route>
-            <Route path='chatbot' element={<Chatbot />}></Route>
-            <Route path='Audio' element={<Audio />}></Route>
-            <Route path='consult' element={<Consult />}></Route>
-            <Route path='therapies/reading' element={<Reading />}></Route>
-            <Route path='talking' element={<Talking />}></Route>
-            <Route path='yoga' element={<Yoga />}></Route>
-          </Route>
+  {/* Public Routes */}
+  <Route path="" element={<GetStart />} />
+  <Route path="login" element={<Login />} />
+  <Route path="signup" element={<Signup />} />
+  <Route path="about" element={<About />} />
+  <Route path="contact" element={<Contact />} />
+  <Route path="question" element={<Question />} />
+
+  {/* Protected Routes */}
+  <Route
+    path="home"
+    element={
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="profile"
+    element={
+      <ProtectedRoute>
+        <Profile />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="notes"
+    element={
+      <ProtectedRoute>
+        <Notes />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="displayNotes"
+    element={
+      <ProtectedRoute>
+        <DisplayNotes />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="playGames"
+    element={
+      <ProtectedRoute>
+        <PlayGames />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="therapy"
+    element={
+      <ProtectedRoute>
+        <Therapy />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="reports"
+    element={
+      <ProtectedRoute>
+        <Reports />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="community"
+    element={
+      <ProtectedRoute>
+        <Community />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="workout"
+    element={
+      <ProtectedRoute>
+        <Workout />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="chatbot"
+    element={
+      <ProtectedRoute>
+        <Chatbot />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="Audio"
+    element={
+      <ProtectedRoute>
+        <Audio />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="consult"
+    element={
+      <ProtectedRoute>
+        <Consult />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="therapies/reading"
+    element={
+      <ProtectedRoute>
+        <Reading />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="talking"
+    element={
+      <ProtectedRoute>
+        <Talking />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="yoga"
+    element={
+      <ProtectedRoute>
+        <Yoga />
+      </ProtectedRoute>
+    }
+  />
+
+</Route>
+
         </Routes>
       
     </>

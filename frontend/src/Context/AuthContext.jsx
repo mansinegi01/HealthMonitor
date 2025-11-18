@@ -14,6 +14,28 @@ export const AuthProvider = ({ children }) => {
     if (savedUser) setUser(JSON.parse(savedUser));
     if (savedToken) setToken(savedToken);
   }, []);
+  useEffect(() => {
+  async function checkAuth() {
+    try {
+      const res = await fetch("http://localhost:8000/api/verify", {
+        method: "GET",
+        credentials: "include", // <-- important
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        setToken("cookie-token"); // placeholder
+      }
+    } catch (err) {
+      setUser(null);
+      setToken(null);
+    }
+  }
+
+  checkAuth();
+}, []);
+
 
   // Save user and token to localStorage whenever they change
   useEffect(() => {
