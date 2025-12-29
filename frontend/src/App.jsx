@@ -30,160 +30,160 @@ function App() {
 
   return (
     <>
-   
 
 
-        <Routes>
-          <Route path="/" element={<Layout />}>
 
-  {/* Public Routes */}
-  <Route path="" element={<GetStart />} />
-  <Route path="login" element={<Login />} />
-  <Route path="signup" element={<Signup />} />
-  <Route path="about" element={<About />} />
-  <Route path="contact" element={<Contact />} />
-  <Route path="question" element={<Question />} />
+      <Routes>
+        <Route path="/" element={<Layout />}>
 
-  {/* Protected Routes */}
-  <Route
-    path="home"
-    element={
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    }
-  />
+          {/* Public Routes */}
+          <Route path="" element={<GetStart />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="question" element={<Question />} />
 
-  <Route
-    path="profile"
-    element={
-      <ProtectedRoute>
-        <Profile />
-      </ProtectedRoute>
-    }
-  />
+          {/* Protected Routes */}
+          <Route
+            path="home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="notes"
-    element={
-      <ProtectedRoute>
-        <Notes />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="displayNotes"
-    element={
-      <ProtectedRoute>
-        <DisplayNotes />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="notes"
+            element={
+              <ProtectedRoute>
+                <Notes />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="playGames"
-    element={
-      <ProtectedRoute>
-        <PlayGames />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="displayNotes"
+            element={
+              <ProtectedRoute>
+                <DisplayNotes />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="therapy"
-    element={
-      <ProtectedRoute>
-        <Therapy />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="playGames"
+            element={
+              <ProtectedRoute>
+                <PlayGames />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="reports"
-    element={
-      <ProtectedRoute>
-        <Reports />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="therapy"
+            element={
+              <ProtectedRoute>
+                <Therapy />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="community"
-    element={
-      <ProtectedRoute>
-        <Community />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="workout"
-    element={
-      <ProtectedRoute>
-        <Workout />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="community"
+            element={
+              <ProtectedRoute>
+                <Community />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="chatbot"
-    element={
-      <ProtectedRoute>
-        <Chatbot />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="workout"
+            element={
+              <ProtectedRoute>
+                <Workout />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="Audio"
-    element={
-      <ProtectedRoute>
-        <Audio />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="chatbot"
+            element={
+              <ProtectedRoute>
+                <Chatbot />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="consult"
-    element={
-      <ProtectedRoute>
-        <Consult />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="Audio"
+            element={
+              <ProtectedRoute>
+                <Audio />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="therapies/reading"
-    element={
-      <ProtectedRoute>
-        <Reading />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="consult"
+            element={
+              <ProtectedRoute>
+                <Consult />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="talking"
-    element={
-      <ProtectedRoute>
-        <Talking />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="therapies/reading"
+            element={
+              <ProtectedRoute>
+                <Reading />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="yoga"
-    element={
-      <ProtectedRoute>
-        <Yoga />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="talking"
+            element={
+              <ProtectedRoute>
+                <Talking />
+              </ProtectedRoute>
+            }
+          />
 
-</Route>
+          <Route
+            path="yoga"
+            element={
+              <ProtectedRoute>
+                <Yoga />
+              </ProtectedRoute>
+            }
+          />
 
-        </Routes>
-      
+        </Route>
+
+      </Routes>
+
     </>
   )
 }
