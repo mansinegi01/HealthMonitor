@@ -8,7 +8,6 @@ import Layout from "../src/Layout/Layout"
 import Home from './Home/Home'
 import About from './About/About'
 import Contact from './Contact/Contact'
-import Header from './Header/Header'
 import GetStart from './GetStart/GetStart'
 import Question from './Questions/Question'
 import Profile from './Profile/Profile'
@@ -25,6 +24,9 @@ import Consult from './Therapies/Consult'
 import Reading from './Therapies/Reading'
 import Talking from './Therapies/Talking'
 import Yoga from './Therapies/Yoga'
+import Report from './Report/Report'
+import DailyCheckIn from './DailyCheckIn/DailyCheckIn'
+import FinalReport from './FinalReport/FinalReport'
 
 function App() {
 
@@ -43,6 +45,9 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="question" element={<Question />} />
+          <Route path="reports" element={<Report />} />
+          <Route path="daily-checkin" element={<DailyCheckIn />} />
+          <Route path="final-report" element={<FinalReport />} />
 
           {/* Protected Routes */}
           <Route

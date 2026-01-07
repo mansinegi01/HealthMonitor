@@ -1,110 +1,80 @@
-// const redisClient= require("../utils/redisClient")
-// const UserHealth = require("../model/userHealth");
-
-// async function sethealthProfile(req, res) {
-//   try {
-//     const userId = req.user.id;
-//     const { weight, heartRate, systolic, diastolic, glucose, waterIntake, notes } = req.body;
-
-//     const updated = await UserHealth.findOneAndUpdate(
-//       { userId },
-//       { $set: { weight, heartRate, systolic, diastolic, glucose, waterIntake, notes } },
-//       { upsert: true, new: true }
-//     );
-
-//     res.status(200).json({
-//       message: " Health data saved successfully",
-//       health: updated,
-//       user: req.user
-//     });
-//   } catch (error) {
-//     console.error("Error saving health data:", error);
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// }
-
-// async function gethealthProfile(req, res) {
-//   try {
-//     const userId = req.user.id;
-//     const health = await UserHealth.findOne({ userId });
-//     if (!health) return res.status(404).json({ message: "Health data not found" });
-
-//     res.status(200).json({ health });
-//   } catch (error) {
-//     console.error(" Error fetching health data:", error);
-//     res.status(500).json({ message: "Server Error", error });
-//   }
-// }
-
-// module.exports = { sethealthProfile, gethealthProfile };
-const redisClient = require("../utils/redisClient");
 const UserHealth = require("../model/userHealth");
+const redisClient = require("../utils/redisClient");
 
-async function sethealthProfile(req, res) {
+/* ================= DAILY CHECK-INS ================= */
+
+const getDailyCheckIns = async (req, res) => {
+  const userId = req.user.id;
+  const cacheKey = `report:logs:${userId}`;
+
   try {
-    const userId = req.user.id;
-    const {
-      weight,
-      heartRate,
-      systolic,
-      diastolic,
-      glucose,
-      waterIntake,
-      notes
-    } = req.body;
-
-    const updated = await UserHealth.findOneAndUpdate(
-      { userId },
-      { $set: { weight, heartRate, systolic, diastolic, glucose, waterIntake, notes } },
-      { upsert: true, new: true }
-    );
-
-    // Cache update: Write-through strategy
-    const cacheKey = `health:${userId}`;
-    await redisClient.setEx(cacheKey, 300, JSON.stringify(updated));  // TTL = 5 min
-
-    return res.status(200).json({
-      message: "Health data saved successfully",
-      health: updated,
-      user: req.user
-    });
-  } catch (error) {
-    console.error("Error saving health data:", error);
-    return res.status(500).json({ message: "Server Error", error });
-  }
-}
-
-async function gethealthProfile(req, res) {
-  try {
-    const userId = req.user.id;
-    const cacheKey = `health:${userId}`;
-
-    // Try Redis first (Read-through)
     const cached = await redisClient.get(cacheKey);
     if (cached) {
-      return res.status(200).json({
-        source: "cache",
-        health: JSON.parse(cached)
-      });
+      return res.json({ logs: JSON.parse(cached) });
     }
 
-    // Fallback to MongoDB
-    const health = await UserHealth.findOne({ userId });
-    if (!health) {
-      return res.status(404).json({ message: "Health data not found" });
-    }
+    const logs = await UserHealth.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(7);
 
-    // Store fresh DB result in Redis
-    await redisClient.setEx(cacheKey, 300, JSON.stringify(health));
-
-    return res.status(200).json({
-      source: "db",
-      health
-    });
-  } catch (error) {
-    console.error("Error fetching health data:", error);
-    return res.status(500).json({ message: "Server Error", error });
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(logs));
+    res.json({ logs });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch logs" });
   }
-}
+};
 
-module.exports = { sethealthProfile, gethealthProfile };
+const saveDailyCheckIn = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    await UserHealth.create({
+      userId,
+      ...req.body,
+    });
+
+    await redisClient.del(`report:logs:${userId}`);
+    await redisClient.del(`report:summary:${userId}`);
+
+    res.status(201).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to save check-in" });
+  }
+};
+
+const generateFinalReport = async (req, res) => {
+  const userId = req.user.id;
+  const cacheKey = `report:summary:${userId}`;
+
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+
+    const logs = await UserHealth.find({ userId });
+
+    const avg = (k) =>
+      Math.round(
+        logs.reduce((s, l) => s + (l[k] || 0), 0) / (logs.length || 1)
+      );
+
+    const report = {
+      averages: {
+        stress: avg("stressLevel"),
+        energy: avg("energyLevel"),
+        focus: avg("focusLevel"),
+        sleep: avg("sleepQuality"),
+      },
+    };
+
+    await redisClient.setEx(cacheKey, 1800, JSON.stringify(report));
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to generate report" });
+  }
+};
+
+module.exports = {
+  getDailyCheckIns,
+  saveDailyCheckIn,
+  generateFinalReport,
+};
