@@ -9,12 +9,10 @@ import Home from './Home/Home'
 import About from './About/About'
 import Contact from './Contact/Contact'
 import GetStart from './GetStart/GetStart'
-import Question from './Questions/Question'
 import Profile from './Profile/Profile'
 import Notes from './Notes/Notes'
 import DisplayNotes from './Notes/DisplayNotes'
 import Therapy from './QuickActioons/Therapy'
-import Reports from './QuickActioons/Reports'
 import PlayGames from './QuickActioons/PlayGames'
 import Community from './QuickActioons/Community'
 import Chatbot from './QuickActioons/Chatbot'
@@ -44,7 +42,6 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="question" element={<Question />} />
           <Route path="reports" element={<Report />} />
           <Route path="daily-checkin" element={<DailyCheckIn />} />
           <Route path="final-report" element={<FinalReport />} />
@@ -104,14 +101,14 @@ function App() {
             }
           />
 
-          <Route
+          {/* <Route
             path="reports"
             element={
               <ProtectedRoute>
                 <Reports />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           <Route
             path="community"

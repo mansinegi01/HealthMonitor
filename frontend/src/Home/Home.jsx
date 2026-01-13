@@ -155,7 +155,7 @@ function Home() {
               <Link to="/playGames" className="text-indigo-600 hover:underline">
                 🎮 Play Games
               </Link>
-              <Link to="/viewReport" className="text-indigo-600 hover:underline">
+              <Link to="/reports" className="text-indigo-600 hover:underline">
                 📊 View Reports
               </Link>
             </div>

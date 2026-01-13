@@ -1,210 +1,212 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-function PlayGames() {
+// --- MINI GAME: ZEN CANVAS ---
+const ZenCanvas = () => {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x; this.y = y;
+        this.size = Math.random() * 8 + 2;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+        this.color = `hsla(${Math.random() * 40 + 200}, 70%, 60%, 0.8)`;
+        this.life = 100;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.size > 0.1) this.size -= 0.1;
+        this.life -= 0.5;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const animate = () => {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.update(); p.draw();
+        if (p.life <= 0) particles.splice(i, 1);
+      });
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    const addParticles = (e) => {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      for(let i=0; i<2; i++) particles.push(new Particle(e.clientX - rect.left, e.clientY - rect.top));
+    };
+
+    canvas.addEventListener('mousemove', addParticles);
+    return () => window.removeEventListener('resize', resize);
+  }, [isDrawing]);
+
   return (
-    <div className="p-6 mt-20 text-center min-h-screen bg-gradient-to-br from-indigo-50 to-pink-100">
-      {/* Header */}
-      <h1 className="text-4xl font-bold text-indigo-600 mb-2">🎮 Play Games</h1>
-      <p className="text-gray-700 mb-10 text-lg">
-        Boost your mood and relax with these mini games 😄
-      </p>
+    <canvas 
+      ref={canvasRef} 
+      onMouseDown={() => setIsDrawing(true)} 
+      onMouseUp={() => setIsDrawing(false)}
+      className="w-full h-[400px] rounded-xl cursor-crosshair bg-slate-900"
+    />
+  );
+};
 
-      {/* Games */}
-      <div className="flex flex-col gap-16 items-center">
-        <MemoryGame />
-        <TicTacToe />
-        <ReactionGame />
-      </div>
+// --- MINI GAME: BREATH SYNC ---
+const BreathSync = () => {
+  const [phase, setPhase] = useState("Inhale");
+  useEffect(() => {
+    const sequence = [
+      { text: "Inhale", duration: 4000 },
+      { text: "Hold", duration: 4000 },
+      { text: "Exhale", duration: 4000 },
+    ];
+    let i = 0;
+    const interval = setInterval(() => {
+      i = (i + 1) % sequence.length;
+      setPhase(sequence[i].text);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center h-[400px] bg-slate-900 rounded-xl">
+      <motion.div
+        animate={{ scale: phase === "Inhale" ? 1.5 : phase === "Exhale" ? 1 : 1.5 }}
+        transition={{ duration: 4, ease: "easeInOut" }}
+        className="w-32 h-32 bg-blue-500/30 border-2 border-blue-400 rounded-full flex items-center justify-center"
+      >
+        <span className="text-white font-medium">{phase}</span>
+      </motion.div>
+    </div>
+  );
+};
+
+// --- MAIN COMPONENT ---
+function PlayGames() {
+  const [activeGame, setActiveGame] = useState(null);
+
+  const games = [
+    { 
+      id: "zen", 
+      title: "Zen Fluid Canvas", 
+      desc: "Flow with colors to quiet your mind.", 
+      icon: "🌊", 
+      color: "from-blue-500 to-indigo-600",
+      component: <ZenCanvas /> 
+    },
+    { 
+      id: "breath", 
+      title: "Breath Sync", 
+      desc: "Regulate your nervous system with visuals.", 
+      icon: "🌬️", 
+      color: "from-emerald-400 to-teal-600",
+      component: <BreathSync /> 
+    },
+    { 
+      id: "focus", 
+      title: "Category Focus", 
+      desc: "Distract your anxiety with logic.", 
+      icon: "🧠", 
+      color: "from-purple-500 to-pink-600",
+      component: <div className="text-center p-10">Category Game Component Goes Here</div> 
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white font-sans p-8 overflow-hidden mt-14">
+      <AnimatePresence mode="wait">
+        {!activeGame ? (
+          <motion.div 
+            key="menu"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className="text-center mb-16">
+              <h1 className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300">
+                Healing Arcade
+              </h1>
+              <p className="text-slate-400 text-lg">Choose a path to peace.</p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-10">
+              {games.map((game) => (
+                <motion.div
+                  key={game.id}
+                  whileHover={{ rotateY: 10, rotateX: -5, scale: 1.05 }}
+                  onClick={() => setActiveGame(game)}
+                  className={`relative w-72 h-96 rounded-3xl p-8 cursor-pointer bg-gradient-to-br ${game.color} shadow-2xl overflow-hidden group`}
+                  style={{ perspective: 1000 }}
+                >
+                  <div className="absolute -right-4 -top-4 text-9xl opacity-10 group-hover:rotate-12 transition-transform">
+                    {game.icon}
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="text-5xl mb-6">{game.icon}</div>
+                      <h2 className="text-2xl font-bold mb-3">{game.title}</h2>
+                      <p className="text-white/80 text-sm">{game.desc}</p>
+                    </div>
+                    <button className="w-full py-3 bg-white/20 backdrop-blur-md rounded-xl border border-white/30 font-semibold hover:bg-white/40 transition-all">
+                      Open Tool
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="active"
+            initial={{ opacity: 0, zoom: 0.8 }}
+            animate={{ opacity: 1, zoom: 1 }}
+            exit={{ opacity: 0 }}
+            className="max-w-4xl mx-auto pt-10"
+          >
+            <button 
+              onClick={() => setActiveGame(null)}
+              className="text-slate-400 hover:text-white mb-6 flex items-center gap-2 transition-colors"
+            >
+              ← Back to Selection
+            </button>
+            <div className="bg-slate-800/50 border border-white/10 p-8 rounded-[2rem] shadow-inner">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold">{activeGame.title}</h2>
+                <span className="px-4 py-1 bg-white/10 rounded-full text-xs uppercase tracking-widest text-slate-300">
+                  Focus Mode
+                </span>
+              </div>
+              {activeGame.component}
+              <p className="mt-6 text-center text-slate-500 text-sm italic">
+                Focus on the movement and let your thoughts pass by.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default PlayGames;
-
-//
-// 🧩 Memory Match Game
-//
-function MemoryGame() {
-  const emojis = ["🍎", "🍇", "🍉", "🍒", "🍍", "🍓"];
-  const [cards, setCards] = useState([]);
-  const [flipped, setFlipped] = useState([]);
-  const [matched, setMatched] = useState([]);
-
-  useEffect(() => {
-    const shuffled = [...emojis, ...emojis]
-      .sort(() => Math.random() - 0.5)
-      .map((emoji, i) => ({ id: i, emoji }));
-    setCards(shuffled);
-  }, []);
-
-  const handleFlip = (index) => {
-    if (flipped.length === 2 || flipped.includes(index)) return;
-    const newFlipped = [...flipped, index];
-    setFlipped(newFlipped);
-
-    if (newFlipped.length === 2) {
-      const [a, b] = newFlipped;
-      if (cards[a].emoji === cards[b].emoji) {
-        setMatched([...matched, cards[a].emoji]);
-      }
-      setTimeout(() => setFlipped([]), 800);
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-lg w-full">
-      <h2 className="text-2xl font-bold mb-4 text-purple-600">🧠 Memory Match</h2>
-      <p className="text-gray-500 mb-4">Match the emoji pairs as fast as you can!</p>
-      <div className="grid grid-cols-4 gap-4 justify-center max-w-md mx-auto">
-        {cards.map((card, i) => (
-          <button
-            key={card.id}
-            onClick={() => handleFlip(i)}
-            className="bg-indigo-100 text-3xl p-4 rounded-lg shadow-md hover:bg-indigo-200 transition-all"
-          >
-            {flipped.includes(i) || matched.includes(card.emoji) ? card.emoji : "❓"}
-          </button>
-        ))}
-      </div>
-      {matched.length === emojis.length && (
-        <p className="mt-4 text-green-600 font-semibold">🎉 You matched all pairs!</p>
-      )}
-    </div>
-  );
-}
-
-//
-// ⭕ Tic Tac Toe Game
-//
-function TicTacToe() {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-
-  const winner = calculateWinner(board);
-
-  function handleClick(i) {
-    if (board[i] || winner) return;
-    const newBoard = [...board];
-    newBoard[i] = xIsNext ? "X" : "O";
-    setBoard(newBoard);
-    setXIsNext(!xIsNext);
-  }
-
-  function calculateWinner(squares) {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let [a, b, c] of lines) {
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
-      }
-    }
-    return null;
-  }
-
-  function resetGame() {
-    setBoard(Array(9).fill(null));
-    setXIsNext(true);
-  }
-
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-lg w-full">
-      <h2 className="text-2xl font-bold text-indigo-600 mb-4">⭕ Tic Tac Toe</h2>
-      <p className="text-gray-500 mb-4">Classic game for two players!</p>
-
-      <div className="grid grid-cols-3 gap-2 justify-center max-w-xs mx-auto">
-        {board.map((value, i) => (
-          <button
-            key={i}
-            onClick={() => handleClick(i)}
-            className="w-20 h-20 bg-indigo-50 text-3xl font-bold rounded-lg shadow-md hover:bg-indigo-100"
-          >
-            {value}
-          </button>
-        ))}
-      </div>
-
-      <p className="mt-4 text-lg font-semibold">
-        {winner
-          ? `🎉 Winner: ${winner}`
-          : `Next Player: ${xIsNext ? "X" : "O"}`}
-      </p>
-
-      <button
-        onClick={resetGame}
-        className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600"
-      >
-        🔄 Restart
-      </button>
-    </div>
-  );
-}
-
-//
-// ⚡ Reaction Time Game
-//
-function ReactionGame() {
-  const [waiting, setWaiting] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [message, setMessage] = useState("Click to Start");
-  const [startTime, setStartTime] = useState(null);
-  const [reactionTime, setReactionTime] = useState(null);
-
-  const startGame = () => {
-    setWaiting(true);
-    setMessage("Wait for green...");
-    setReactionTime(null);
-    const delay = Math.random() * 3000 + 2000;
-    setTimeout(() => {
-      setReady(true);
-      setWaiting(false);
-      setMessage("Click now!");
-      setStartTime(Date.now());
-    }, delay);
-  };
-
-  const handleClick = () => {
-    if (waiting) {
-      setMessage("Too soon! Wait for green 😅");
-      setWaiting(false);
-    } else if (ready) {
-      const reaction = Date.now() - startTime;
-      setReactionTime(reaction);
-      setMessage(`Your reaction: ${reaction} ms ⚡`);
-      setReady(false);
-    } else {
-      startGame();
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-lg w-full">
-      <h2 className="text-2xl font-bold text-green-600 mb-4">⚡ Reaction Time</h2>
-      <p className="text-gray-500 mb-4">Test how fast you can react!</p>
-
-      <div
-        onClick={handleClick}
-        className={`w-80 h-60 mx-auto flex items-center justify-center text-xl font-semibold text-white rounded-2xl shadow-lg cursor-pointer transition-colors ${
-          waiting
-            ? "bg-red-500"
-            : ready
-            ? "bg-green-500"
-            : "bg-blue-500 hover:bg-blue-600"
-        }`}
-      >
-        {message}
-      </div>
-
-      {reactionTime && (
-        <p className="mt-4 text-lg text-gray-700">Try to beat your score!</p>
-      )}
-    </div>
-  );
-}
