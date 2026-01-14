@@ -42,8 +42,6 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="reports" element={<Report />} />
-          <Route path="daily-checkin" element={<DailyCheckIn />} />
           <Route path="final-report" element={<FinalReport />} />
 
           {/* Protected Routes */}
@@ -55,6 +53,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="daily-checkin"
+            element={
+              <ProtectedRoute>
+                <DailyCheckIn />
+              </ProtectedRoute>
+            }
+          />
+
 
           <Route
             path="profile"
@@ -101,14 +109,14 @@ function App() {
             }
           />
 
-          {/* <Route
+          <Route
             path="reports"
             element={
               <ProtectedRoute>
-                <Reports />
+                <Report />
               </ProtectedRoute>
             }
-          /> */}
+          />
 
           <Route
             path="community"

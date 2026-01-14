@@ -638,84 +638,213 @@ const DailyCheckin = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const payload = {
-      ...formData,
-      sleepHours: Number(formData.sleepHours),
-      sleepQuality: Number(formData.sleepQuality),
-      stressLevel: Number(formData.stressLevel),
-      energyLevel: Number(formData.energyLevel),
-      focusLevel: Number(formData.focusLevel),
-      waterIntake: Number(formData.waterIntake),
-      screenTimeHours: Number(formData.screenTimeHours),
-    };
-
-    try {
-      const res = await fetch(
-        "http://localhost:8000/api/health/daily-checkin",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (res.status === 201) {
-        navigate("/reports", { state: { fromCheckin: true } });
-      }
-    } catch (err) {
-      console.error("Save failed", err);
-    }
+  const payload = {
+    ...formData,
+    sleepHours: Number(formData.sleepHours),
+    sleepQuality: Number(formData.sleepQuality),
+    stressLevel: Number(formData.stressLevel),
+    energyLevel: Number(formData.energyLevel),
+    focusLevel: Number(formData.focusLevel),
+    waterIntake: Number(formData.waterIntake),
+    screenTimeHours: Number(formData.screenTimeHours),
   };
 
+  try {
+    const res = await fetch("http://localhost:8000/api/health/daily-checkin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Ensure token exists
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      console.log("Submission successful");
+      // Use replace: true to prevent user from going back to the form
+      navigate("/reports", { state: { fromCheckin: true }, replace: true });
+    } else {
+      const errorData = await res.json();
+      alert("Error: " + (errorData.message || "Failed to save data"));
+    }
+  } catch (err) {
+    console.error("Save failed", err);
+    alert("Network error. Please try again.");
+  }
+};
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-10 rounded-2xl shadow max-w-3xl w-full space-y-6"
-      >
-        <h1 className="text-2xl font-bold">Daily Check-in</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10">
+      <div className="w-full max-w-3xl bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          Health & Wellness Check-In
+        </h1>
+        <p className="text-gray-500 mb-8">
+          Take a moment to reflect on your day
+        </p>
 
-        Sleep hours : <input name="sleepHours" placeholder="Sleep Hours" type="number" onChange={handleChange} className="text-black" />
-        <input name="sleepQuality" placeholder="Sleep Quality (1-5)" type="number" onChange={handleChange}  className="text-black" />
-        <input name="stressLevel" placeholder="Stress Level (1-5)" type="number" onChange={handleChange}  className="text-black" />
-        <input name="energyLevel" placeholder="Energy Level (1-5)" type="number" onChange={handleChange}  className="text-black" />
-        <input name="focusLevel" placeholder="Focus Level (1-5)" type="number" onChange={handleChange}  className="text-black" />
+        <form onSubmit={handleSubmit} className="space-y-10">
+          <Section title="Mental & Lifestyle Health">
+            <Input
+              label="Sleep Hours"
+              name="sleepHours"
+              value={formData.sleepHours}
+              onChange={handleChange}
+            />
 
-        <select name="activityLevel" onChange={handleChange}  className="text-black">
-          <option value=""  className="text-black">Activity Level</option>
-          <option value="none"  className="text-black">None</option>
-          <option value="low"  className="text-black">Low</option>
-          <option value="moderate"  className="text-black">Moderate</option>
-          <option value="high"  className="text-black">High</option>
-        </select>
+            <Select
+              label="Sleep Quality (1–5)"
+              name="sleepQuality"
+              value={formData.sleepQuality}
+              options={["1", "2", "3", "4", "5"]}
+              onChange={handleChange}
+            />
 
-        <input name="waterIntake" placeholder="Water Intake (liters)" type="number" onChange={handleChange} />
-        <input name="screenTimeHours" placeholder="Screen Time (hours)" type="number" onChange={handleChange} />
+            <Select
+              label="Stress Level (1–5)"
+              name="stressLevel"
+              value={formData.stressLevel}
+              options={["1", "2", "3", "4", "5"]}
+              onChange={handleChange}
+            />
 
-        <select name="socialInteractionLevel" onChange={handleChange}>
-          <option value="">Social Interaction</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
+            <Select
+              label="Energy Level (1–5)"
+              name="energyLevel"
+              value={formData.energyLevel}
+              options={["1", "2", "3", "4", "5"]}
+              onChange={handleChange}
+            />
 
-        <textarea name="notes" placeholder="Notes" onChange={handleChange} />
+            <Select
+              label="Focus Level (1–5)"
+              name="focusLevel"
+              value={formData.focusLevel}
+              options={["1", "2", "3", "4", "5"]}
+              onChange={handleChange}
+            />
 
-        <button type="submit" className="bg-blue-600 text-white py-2 rounded">
-          Save & Go to Report
-        </button>
-      </form>
+            <Select
+              label="Physical Activity Level"
+              name="activityLevel"
+              value={formData.activityLevel}
+              options={["none", "low", "moderate", "high"]}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Water Intake (liters)"
+              name="waterIntake"
+              value={formData.waterIntake}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Screen Time (hours)"
+              name="screenTimeHours"
+              value={formData.screenTimeHours}
+              onChange={handleChange}
+            />
+
+            <Select
+              label="Social Interaction Level"
+              name="socialInteractionLevel"
+              value={formData.socialInteractionLevel}
+              options={["low", "medium", "high"]}
+              onChange={handleChange}
+            />
+          </Section>
+
+          <Section title="Personal Reflection">
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Write a short reflection about your day..."
+              className="w-full p-4 border border-gray-300 rounded-xl text-gray-900
+                         focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </Section>
+
+          <div className="flex justify-end gap-4">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border border-gray-300 rounded-xl
+                         text-gray-700 hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="px-8 py-2 bg-blue-600 text-white rounded-xl
+                         hover:bg-blue-700 transition shadow-md"
+            >
+              Save Health Data
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
+/* ================= Reusable Components ================= */
+
+const Section = ({ title, children }) => (
+  <div>
+    <h2 className="text-lg font-semibold text-gray-800 mb-4">
+      {title}
+    </h2>
+    <div className="grid sm:grid-cols-2 gap-5">
+      {children}
+    </div>
+  </div>
+);
+
+const Input = ({ label, ...props }) => (
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <input
+      type="number"
+      {...props}
+      className="p-3 border border-gray-300 rounded-xl text-gray-900
+                 focus:ring-2 focus:ring-blue-500 outline-none"
+    />
+  </div>
+);
+
+const Select = ({ label, name, value, options, onChange }) => (
+  <div className="flex flex-col">
+    <label className="text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="p-3 border border-gray-300 rounded-xl text-gray-900
+                 focus:ring-2 focus:ring-blue-500 outline-none"
+    >
+      <option value="">Select</option>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
 export default DailyCheckin;
+

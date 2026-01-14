@@ -336,27 +336,24 @@ const Report = () => {
 
   useEffect(() => {
     const fetchLogs = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:8000/api/health/daily-checkin",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await res.json();
-        setLogs(data.logs || []);
+  try {
+    const res = await fetch("http://localhost:8000/api/health/daily-checkin", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+    if (!res.ok) throw new Error("Unauthorized or Server Error");
 
-        if (data.logs?.length > 0) {
-          setShowPrompt(false);
-        }
-      } catch (err) {
-        console.error("Failed to fetch logs", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const data = await res.json();
+    setLogs(data.logs || []);
+    // ... rest of logic
+  } catch (err) {
+    console.error("Failed to fetch logs", err);
+    // If token is expired, redirect to login
+    if (err.message.includes("Unauthorized")) navigate("/login");
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchLogs();
   }, [token]);
