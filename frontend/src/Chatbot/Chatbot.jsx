@@ -121,16 +121,27 @@
 // };
 
 // export default Chatbot;
-import React from "react";
-import { useState } from "react";
-import ModeSelector from "./MoodSelector";
+import React, {useState} from "react";
+// import { useState } from "react";
+import ModeSelector from "./ModeSelector";
 import AvatarChat from "./AvatarChat";
 import TextChat from "./TextChat";
 
+// export default function Chatbot() {
+//   const [mode, setMode] = useState(null);
+
+//   if (!mode) return <ModeSelector setMode={setMode} />;
+
+//   return mode === "avatar" ? <AvatarChat /> : <TextChat />;
+// }
 export default function Chatbot() {
   const [mode, setMode] = useState(null);
 
-  if (!mode) return <ModeSelector setMode={setMode} />;
-
-  return mode === "avatar" ? <AvatarChat /> : <TextChat />;
+  // Add a container div with padding so content isn't hidden under the header
+  return (
+    <div style={{ padding: "20px", marginTop: "80px" }}> 
+       {!mode ? <ModeSelector setMode={setMode} /> : 
+        mode === "avatar" ? <AvatarChat /> : <TextChat />}
+    </div>
+  );
 }

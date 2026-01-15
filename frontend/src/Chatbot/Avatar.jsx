@@ -1,3 +1,4 @@
+import React from "react";
 export default function Avatar({ emotion }) {
   return (
     <div style={{ fontSize: "80px", textAlign: "center" }}>

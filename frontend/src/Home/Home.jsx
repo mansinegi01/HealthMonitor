@@ -1,262 +1,211 @@
-
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import React, { useState, useContext } from "react";
-import {
-  MessageCircle,
-  Activity,
-  FileText,
-  Users,
-} from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { MessageCircle, Users, Zap, PenTool, Dumbbell, Brain, Sun, Moon } from "lucide-react";
 import { AuthContext } from "../Context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import bg from "../assets/yoga-544970_1280.webp";
 
 function Home() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
+  const [isDark, setIsDark] = useState(true);
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [highlightNotes, setHighlightNotes] = useState(false);
   const [highlightTherapy, setHighlightTherapy] = useState(false);
 
   const feelings = [
-    "Happy 😊",
-    "Excited 🤩",
-    "Good 🙂",
-    "Tired 😴",
-    "Sad 😢",
-    "Anxious 😟",
+    { label: "Happy 😊", mood: "happy" },
+    { label: "Excited 🤩", mood: "happy" },
+    { label: "Good 🙂", mood: "good" },
+    { label: "Tired 😴", mood: "tired" },
+    { label: "Sad 😢", mood: "sad" },
+    { label: "Anxious 😟", mood: "anxious" },
   ];
 
   const motivationalQuotesByMood = {
-    "Tired 😴": [
-      "Rest when you need to, but don’t quit. 🌙",
-      "Even slow progress is progress. 💪",
-    ],
-    "Sad 😢": [
-      "It’s okay to not be okay — better days are coming. ☀️",
-      "You are stronger than you feel right now. 💫",
-    ],
-    "Anxious 😟": [
-      "Breathe. You’ve got this. 🌿",
-      "Peace begins with one deep breath. 🌸",
-    ],
+    "Tired 😴": ["Rest when you need to, but don’t quit. 🌙", "Even slow progress is progress. 💪"],
+    "Sad 😢": ["It’s okay to not be okay — better days are coming. ☀️", "You are stronger than you feel right now. 💫"],
+    "Anxious 😟": ["Breathe. You’ve got this. 🌿", "Peace begins with one deep breath. 🌸"],
   };
 
-  // ==========================================
-  // SAVE MOOD TO BACKEND (DAILY CHECK-IN)
-  // ==========================================
-  const saveDailyMood = async (feeling) => {
-    try {
-      const moodMap = {
-        "Happy 😊": "happy",
-        "Excited 🤩": "happy",
-        "Good 🙂": "good",
-        "Tired 😴": "tired",
-        "Sad 😢": "sad",
-        "Anxious 😟": "anxious",
-      };
-
-      await axios.post("/api/mood/add", {
-        userId: user?._id,
-        mood: moodMap[feeling],
-      });
-
-      console.log("Mood saved:", moodMap[feeling]);
-    } catch (err) {
-      console.error("Error saving mood:", err);
-    }
-  };
-
-  const handleFeelingClick = async (feeling) => {
+  const handleFeelingClick = async (feelingLabel) => {
     setHighlightNotes(false);
     setHighlightTherapy(false);
 
-    // Save today's mood to the database
-    await saveDailyMood(feeling);
+    const moodObj = feelings.find(f => f.label === feelingLabel);
+    try {
+      await axios.post("/api/mood/add", { userId: user?._id, mood: moodObj.mood });
+    } catch (err) { console.error(err); }
 
     let popupText = "";
-
-    if (["Happy 😊", "Excited 🤩", "Good 🙂"].includes(feeling)) {
+    if (["Happy 😊", "Excited 🤩", "Good 🙂"].includes(feelingLabel)) {
       setHighlightNotes(true);
-      popupText = "📝 Write your emotions and thoughts!";
+      popupText = "📝 Reflect on this joy in your notes!";
     } else {
       setHighlightTherapy(true);
-      const quotes = motivationalQuotesByMood[feeling];
-      popupText = `${quotes[Math.floor(Math.random() * quotes.length)]} 💚 Take therapy 🌿`;
+      const quotes = motivationalQuotesByMood[feelingLabel] || ["You are loved. 💚"];
+      popupText = `${quotes[Math.floor(Math.random() * quotes.length)]}`;
     }
 
     setPopupMessage(popupText);
     setShowPopup(true);
-
-    // Hide popup + reset highlights
-    setTimeout(() => setShowPopup(false), 3000);
+    
     setTimeout(() => {
+      setShowPopup(false);
       setHighlightNotes(false);
       setHighlightTherapy(false);
-    }, 3000);
-  };
-
-  const handleMoodSelect = (mood) => {
-    navigate("/notes", { state: { mood } });
+    }, 4000); 
   };
 
   return (
-    <div
-      className="relative min-h-screen flex flex-col items-center text-gray-900 overflow-hidden"
-      style={{
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-blue-50/70 to-indigo-50/60 backdrop-blur-sm"></div>
-
-      {/* Popup Message */}
-      {showPopup && (
-        <div className="fixed top-24 bg-green-500 text-white px-8 py-3 rounded-full shadow-lg text-center animate-bounce z-50">
-          {popupMessage}
+    <div className={`min-h-screen transition-colors duration-500 overflow-x-hidden font-sans ${isDark ? "bg-[#030305] text-white" : "bg-[#F0F4FF] text-slate-800"}`}>
+      
+      {/* 🌓 Theme Slider (Top Right) */}
+      <div className="fixed top-20 right-8 z-[100] flex items-center gap-3">
+        <Sun size={18} className={isDark ? "text-gray-500" : "text-amber-500"} />
+        <div 
+          onClick={() => setIsDark(!isDark)}
+          className="w-14 h-7 bg-indigo-500/20 rounded-full relative cursor-pointer border border-indigo-400/30 shadow-inner"
+        >
+          <motion.div 
+            animate={{ x: isDark ? 28 : 2 }}
+            className="w-6 h-6 bg-indigo-600 rounded-full absolute top-0.5 shadow-lg flex items-center justify-center"
+          >
+             {isDark ? <Moon size={12} className="text-white" /> : <Sun size={12} className="text-white" />}
+          </motion.div>
         </div>
-      )}
+        <Moon size={18} className={isDark ? "text-indigo-400" : "text-gray-400"} />
+      </div>
 
-      {/* Content */}
-      <div className="z-10 mt-24 w-full max-w-md px-6 flex flex-col items-center gap-8 pb-20">
-        {/* Greeting */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-indigo-700">
-            Hello, {user?.name || "Guest"} 👋
+      {/* 🌌 Animated Background Elements */}
+      <div className="fixed inset-0 z-0">
+        <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] animate-pulse ${isDark ? "bg-indigo-900/20" : "bg-blue-200/50"}`} />
+        <div className={`absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] animate-pulse ${isDark ? "bg-blue-900/20" : "bg-purple-200/40"}`} style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* 🔔 Popup */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div 
+            initial={{ y: -100, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -100, opacity: 0 }}
+            className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-2xl shadow-xl flex items-center gap-3 min-w-[320px] justify-center ${isDark ? "bg-indigo-600 border border-white/20 text-white" : "bg-white border border-indigo-100 text-indigo-700"}`}
+          >
+            <Zap size={22} className="animate-bounce text-yellow-300" />
+            <span className="font-bold text-lg">{popupMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🏠 Main Content */}
+      <main className="relative z-10 pt-28 pb-20 px-6 max-w-3xl mx-auto">
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
+          <h1 className={`text-5xl font-black tracking-tighter bg-clip-text text-transparent ${isDark ? "bg-gradient-to-r from-white via-indigo-200 to-indigo-500" : "bg-gradient-to-r from-indigo-600 via-blue-500 to-indigo-800"}`}>
+            Welcome, {user?.name || "Explorer"}
           </h1>
-          <p className="text-gray-600 mt-2 text-lg">How are you feeling today?</p>
-        </div>
-
-        {/* Mood Buttons */}
-        <div className="flex flex-wrap justify-center gap-3">
-          {feelings.map((feeling, index) => (
-            <button
-              key={index}
-              onClick={() => handleFeelingClick(feeling)}
-              className="bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transform transition-all duration-300 text-sm"
-            >
-              {feeling}
-            </button>
-          ))}
-        </div>
-
-        {/* Cards */}
-        <div className="flex flex-col gap-5 mt-8 w-full items-center">
-          {/* Quick Actions */}
-          <div className="bg-white/90 w-full p-5 rounded-2xl border border-gray-200 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center">
-            <h3 className="text-lg font-semibold text-indigo-700 mb-2">
-              ⚡ Quick Actions
-            </h3>
-            <div className="flex flex-col space-y-2 text-sm">
-              <Link to="/playGames" className="text-indigo-600 hover:underline">
-                🎮 Play Games
-              </Link>
-              <Link to="/reports" className="text-indigo-600 hover:underline">
-                📊 View Reports
-              </Link>
-            </div>
-          </div>
-
-          {/* Wellness Notes */}
-          <div
-            className={`bg-white/90 w-full p-5 rounded-2xl border border-gray-200 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center ${
-              highlightNotes ? "scale-110 border-indigo-400" : ""
-            }`}
-          >
-            <h3 className="text-lg font-semibold text-indigo-700 mb-2">
-              📝 Wellness Notes
-            </h3>
-            <p className="text-gray-500 text-sm mb-4">
-              Reflect on your emotions — note how you feel 💫
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => handleMoodSelect("good")}
-                className="bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold py-2 rounded-xl shadow hover:scale-105 transition-transform text-sm"
+          <p className={`mt-4 text-lg font-medium ${isDark ? "text-gray-400" : "text-slate-500"}`}>How is your inner world today?</p>
+          
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            {feelings.map((f, i) => (
+              <motion.button
+                key={i}
+                whileHover={{ scale: 1.05 }}
+                onClick={() => handleFeelingClick(f.label)}
+                className={`px-6 py-2 rounded-full border transition-all shadow-sm font-medium ${isDark ? "bg-white/5 border-white/10 text-white hover:bg-indigo-500/20 hover:border-indigo-500/50" : "bg-white/70 border-indigo-100 text-slate-700 hover:bg-white hover:border-indigo-300"}`}
               >
-                😄 Feeling Good
-              </button>
-
-              <button
-                onClick={() => handleMoodSelect("sad")}
-                className="bg-gradient-to-r from-red-400 to-red-600 text-white font-semibold py-2 rounded-xl shadow hover:scale-105 transition-transform text-sm"
-              >
-                😔 Not Feeling Good
-              </button>
-            </div>
+                {f.label}
+              </motion.button>
+            ))}
           </div>
+        </motion.div>
 
-          {/* Workout Videos */}
-          <div className="bg-white/90 w-full p-5 rounded-2xl border border-gray-200 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center">
-            <h3 className="text-lg font-semibold text-indigo-700 mb-2">
-              🏋️ Workout Videos
-            </h3>
-            <p className="text-gray-500 text-sm mb-4">
-              Boost your mood with fitness & yoga 💪
-            </p>
-            <button
-              onClick={() => navigate("/workout")}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-6 rounded-full hover:scale-105 transition-transform text-sm"
-            >
-              Watch Now
-            </button>
-          </div>
+        {/* 🧩 COLUMN DASHBOARD */}
+        <div className="flex flex-col gap-8" style={{ perspective: "1000px" }}>
+          
+          <HomeCard 
+            isDark={isDark}
+            highlight={highlightNotes}
+            icon={<PenTool className="text-green-500" />}
+            title="Wellness Notes"
+            desc="Reflect on your emotions — document your soul's journey."
+            action={
+              <div className="flex gap-4 w-full">
+                <button onClick={() => navigate("/notes", { state: { mood: 'good' } })} className={`flex-1 py-3 rounded-xl transition-all font-bold border ${isDark ? "bg-green-500/20 border-green-500/30 text-white hover:bg-green-500/40" : "bg-emerald-100/50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"}`}>😄 Feeling Good</button>
+                <button onClick={() => navigate("/notes", { state: { mood: 'sad' } })} className={`flex-1 py-3 rounded-xl transition-all font-bold border ${isDark ? "bg-red-500/20 border-red-500/30 text-white hover:bg-red-500/40" : "bg-rose-100/50 border-rose-200 text-rose-700 hover:bg-rose-100"}`}>😔 Not Great</button>
+              </div>
+            }
+          />
 
-          {/* Therapy Section */}
-          <div
-            className={`bg-white/90 w-full p-6 rounded-2xl border border-gray-200 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center ${
-              highlightTherapy ? "scale-110 border-indigo-400" : ""
-            }`}
-          >
-            <h3 className="text-lg font-semibold text-indigo-700 mb-2">🧠 Therapy</h3>
-            <p className="text-gray-500 text-sm mb-4">
-              Relax your mind and uplift your mood while working 🌿
-            </p>
-            <button
-              onClick={() => navigate("/therapy")}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-6 rounded-full hover:scale-105 transition-transform text-sm"
-            >
-              Explore Therapy
-            </button>
-          </div>
+          <HomeCard 
+            isDark={isDark}
+            highlight={highlightTherapy}
+            icon={<Brain className="text-purple-500" />}
+            title="Mind Therapy"
+            desc="Listen to soothing frequencies and guided meditation designed for mental clarity."
+            action={
+              <button onClick={() => navigate("/therapy")} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${isDark ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20" : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"}`}>Enter Therapy Room</button>
+            }
+          />
+
+          <HomeCard 
+            isDark={isDark}
+            icon={<Dumbbell className="text-blue-500" />}
+            title="Fitness & Yoga"
+            desc="Engage in curated physical activities to strengthen both body and mind."
+            action={
+              <button onClick={() => navigate("/workout")} className={`w-full py-4 rounded-xl font-bold transition-all ${isDark ? "bg-white/10 hover:bg-white/20 border border-white/10" : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"}`}>Start Session</button>
+            }
+          />
+
+          {/* Chatbot and Community at the Bottom */}
+          <HomeCard 
+            isDark={isDark}
+            icon={<MessageCircle className="text-indigo-400" />}
+            title="AI Wellness Guide"
+            desc="Chat with your personal AI companion for instant support and guidance."
+            action={
+              <button onClick={() => navigate("/chatbot")} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${isDark ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20" : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"}`}>Start Chatting</button>
+            }
+          />
+
+          <HomeCard 
+            isDark={isDark}
+            icon={<Users className="text-pink-400" />}
+            title="Community Circle"
+            desc="Join our safe haven to share experiences and connect with fellow travelers."
+            action={
+              <button onClick={() => navigate("/community")} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${isDark ? "bg-pink-600 hover:bg-pink-500 text-white shadow-pink-500/20" : "bg-pink-500 hover:bg-pink-600 text-white shadow-pink-200"}`}>Explore Community</button>
+            }
+          />
         </div>
-      </div>
-
-      {/* Floating Buttons */}
-      <div className="fixed bottom-5 right-5 flex flex-col gap-4 z-50">
-
-        {/* Chatbot */}
-        <div className="relative group">
-          <button
-            onClick={() => navigate("/chatbot")}
-            className="bg-indigo-500 p-3 rounded-full shadow-lg hover:bg-indigo-600 transition-colors"
-          >
-            <MessageCircle size={22} className="text-white" />
-          </button>
-          <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-indigo-600 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-all">
-            Chat with AI
-          </span>
-        </div>
-
-        {/* Community */}
-        <div className="relative group">
-          <button
-            onClick={() => navigate("/community")}
-            className="bg-pink-500 p-3 rounded-full shadow-lg hover:bg-pink-600 transition-colors"
-          >
-            <Users size={22} className="text-white" />
-          </button>
-          <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-pink-600 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-all">
-            Community 💬
-          </span>
-        </div>
-      </div>
+      </main>
     </div>
+  );
+}
+
+function HomeCard({ icon, title, desc, action, highlight, isDark }) {
+  return (
+    <motion.div
+      whileHover={{ rotateX: 2, translateZ: 10, scale: 1.01 }}
+      className={`relative p-8 rounded-[32px] border transition-all duration-500 group overflow-hidden ${
+        highlight 
+        ? (isDark ? "bg-indigo-600/30 border-indigo-400 shadow-2xl" : "bg-white border-indigo-400 shadow-2xl") 
+        : (isDark ? "bg-[#0f0f15]/60 border-white/10 backdrop-blur-2xl" : "bg-white/40 border-white/60 backdrop-blur-xl shadow-xl shadow-indigo-100/20")
+      }`}
+    >
+      <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
+        <div className={`p-5 rounded-3xl border shadow-sm ${isDark ? "bg-white/5 border-white/10" : "bg-white border-indigo-50"}`}>
+          {React.cloneElement(icon, { size: 32 })}
+        </div>
+        <div className="flex-1 text-center md:text-left">
+          <h3 className={`text-3xl font-bold mb-2 tracking-tight ${isDark ? "text-white" : "text-slate-800"}`}>{title}</h3>
+          <p className={`text-base leading-relaxed mb-8 max-w-xl font-medium ${isDark ? "text-gray-400" : "text-slate-500"}`}>{desc}</p>
+          <div className="w-full">{action}</div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
