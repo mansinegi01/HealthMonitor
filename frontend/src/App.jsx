@@ -15,7 +15,7 @@ import DisplayNotes from './Notes/DisplayNotes'
 import Therapy from './QuickActioons/Therapy'
 import PlayGames from './QuickActioons/PlayGames'
 import Community from './QuickActioons/Community'
-import Chatbot from './QuickActioons/Chatbot'
+import Chatbot from './Chatbot/Chatbot'
 import Workout from './QuickActioons/Workout'
 import Audio from './Therapies/Audio'
 import Consult from './Therapies/Consult'
@@ -146,49 +146,50 @@ function App() {
           />
 
           <Route
-            path="Audio"
-            element={
-              <ProtectedRoute>
-                <Audio />
-              </ProtectedRoute>
-            }
-          />
+          path="therapies/audio"
+          element={
+            <ProtectedRoute>
+              <Audio />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="consult"
-            element={
-              <ProtectedRoute>
-                <Consult />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="therapies/reading"
+          element={
+            <ProtectedRoute>
+              <Reading />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="therapies/reading"
-            element={
-              <ProtectedRoute>
-                <Reading />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="therapies/yoga"
+          element={
+            <ProtectedRoute>
+              <Yoga />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="talking"
-            element={
-              <ProtectedRoute>
-                <Talking />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="therapies/consult"
+          element={
+            <ProtectedRoute>
+              <Consult />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="yoga"
-            element={
-              <ProtectedRoute>
-                <Yoga />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="therapies/talking"
+          element={
+            <ProtectedRoute>
+              <Talking />
+            </ProtectedRoute>
+          }
+        />
+
 
         </Route>
 
