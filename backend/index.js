@@ -11,6 +11,7 @@ const userHealthRoutes = require('./routes/userHealthRoutes');
 const userNotesRoutes = require('./routes/userNotesRoutes'); 
 const userPostsRoutes = require("./routes/userPosts");
 const userChatRoutes = require('./routes/chatbotrRoutes')
+const userMoodRoutes = require('./routes/userMoodRoutes')
 
 const port = process.env.PORT || 8000;
 
@@ -29,6 +30,8 @@ app.use("/api/health",restrictUser, userHealthRoutes);
 app.use("/api/notes",restrictUser, userNotesRoutes); 
 app.use("/api/posts",restrictUser, userPostsRoutes); 
 app.use("/api/chatbot",restrictUser, userChatRoutes);
+app.use("/api/mood", restrictUser, userMoodRoutes);
+
 
 
 // Server

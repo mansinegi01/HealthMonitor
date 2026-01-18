@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Mood = require("../models/Mood");
+const Mood = require("../model/mood");
 
 async function addMood(req,res){
   try {
