@@ -15,31 +15,44 @@
 // };
 
 // export default ProtectedRoute;
-import React from "react";
 // import { Navigate } from "react-router-dom";
 
 // const ProtectedRoute = ({ children }) => {
-//   const token = localStorage.getItem("token");
-
-//   if (!token) {
-//     return <Navigate to="/login" replace />;
-//   }
-
+  //   const token = localStorage.getItem("token");
+  
+  //   if (!token) {
+    //     return <Navigate to="/login" replace />;
+    //   }
+    
 //   return children;
 // };
 
 // export default ProtectedRoute;
 
+// import { Navigate } from "react-router-dom";
+// import { useContext } from "react";
+// import { AuthContext } from "../Context/AuthContext";
+
+// export default function ProtectedRoute({ children }) {
+  //   const { user, token } = useContext(AuthContext);
+  
+  //   if (!user || !token) {
+    //     return <Navigate to="/login" replace />;
+    //   }
+    
+    //   return children;
+    // }
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 
-export default function ProtectedRoute({ children }) {
-  const { user, token } = useContext(AuthContext);
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
 
-  if (!user || !token) {
-    return <Navigate to="/login" replace />;
-  }
+  if (loading) return null; 
 
-  return children;
-}
+  return user ? children : <Navigate to="/login" replace />;
+};
+
+export default ProtectedRoute;

@@ -229,9 +229,9 @@ function Home() {
 
   const feelings = [
     { label: "Happy 😊", mood: "happy" },
-    { label: "Excited 🤩", mood: "happy" },
-    { label: "Good 🙂", mood: "good" },
-    { label: "Tired 😴", mood: "tired" },
+    { label: "Excited 🤩", mood: "excited" }, // ✅ Match DB: "excited"
+    { label: "Good 🙂", mood: "good" },       // ✅ Match DB: "good"
+    { label: "Tired 😴", mood: "tired" },     // ✅ Match DB: "tired"
     { label: "Sad 😢", mood: "sad" },
     { label: "Anxious 😟", mood: "anxious" },
   ];
@@ -242,14 +242,43 @@ function Home() {
     "Anxious 😟": ["Breathe. You’ve got this. 🌿", "Peace begins with one deep breath. 🌸"],
   };
 
-  const handleFeelingClick = async (feelingLabel) => {
+ const handleFeelingClick = async (feelingLabel) => {
     setHighlightNotes(false);
     setHighlightTherapy(false);
 
-    const moodObj = feelings.find(f => f.label === feelingLabel);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("No token found. Please login.");
+      navigate("/login");
+      return;
+    }
+
+    let userId;
     try {
-      await axios.post("/api/mood/add", { userId: user?._id, mood: moodObj.mood });
-    } catch (err) { console.error(err); }
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      userId = payload.id || payload._id; 
+    } catch (e) {
+      console.error("Token decode failed", e);
+      return;
+    }
+
+    const moodObj = feelings.find(f => f.label === feelingLabel);
+
+    try {
+      await axios.post(
+        "http://localhost:8000/api/mood/add", 
+        { 
+          userId: userId, 
+          mood: moodObj.mood 
+        },
+        { 
+          headers: { Authorization: `Bearer ${token}` } 
+        }
+      );
+    } catch (err) { 
+      console.error("Backend Error:", err.response?.data || err.message); 
+    }
 
     let popupText = "";
     if (["Happy 😊", "Excited 🤩", "Good 🙂"].includes(feelingLabel)) {
@@ -270,11 +299,9 @@ function Home() {
       setHighlightTherapy(false);
     }, 4000); 
   };
-
   return (
     <div className={`min-h-screen transition-colors duration-500 overflow-x-hidden font-sans ${isDark ? "bg-[#030305] text-white" : "bg-[#F0F4FF] text-slate-800"}`}>
       
-      {/* 🌓 Theme Slider (Top Right) */}
       <div className="fixed top-20 right-8 z-[100] flex items-center gap-3">
         <Sun size={18} className={isDark ? "text-gray-500" : "text-amber-500"} />
         <div 
@@ -291,13 +318,11 @@ function Home() {
         <Moon size={18} className={isDark ? "text-indigo-400" : "text-gray-400"} />
       </div>
 
-      {/* 🌌 Animated Background Elements */}
       <div className="fixed inset-0 z-0">
         <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] animate-pulse ${isDark ? "bg-indigo-900/20" : "bg-blue-200/50"}`} />
         <div className={`absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] animate-pulse ${isDark ? "bg-blue-900/20" : "bg-purple-200/40"}`} style={{ animationDelay: '2s' }} />
       </div>
 
-      {/* 🔔 Popup */}
       <AnimatePresence>
         {showPopup && (
           <motion.div 
@@ -332,8 +357,7 @@ function Home() {
             ))}
           </div>
         </motion.div>
-
-        {/* 🧩 COLUMN DASHBOARD */}
+s
         <div className="flex flex-col gap-8" style={{ perspective: "1000px" }}>
           
           <HomeCard 
@@ -360,8 +384,7 @@ function Home() {
               <button onClick={() => navigate("/therapy")} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg ${isDark ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20" : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"}`}>Enter Therapy Room</button>
             }
           />
-
-          {/* ⚡ QUICK HUB (Placed below Mind Therapy) */}
+s
           <HomeCard 
             isDark={isDark}
             icon={<Zap className="text-yellow-400" />}
@@ -378,14 +401,13 @@ function Home() {
           <HomeCard 
             isDark={isDark}
             icon={<Dumbbell className="text-blue-500" />}
-            title="Fitness & Yoga"
+            title="Fitness"
             desc="Engage in curated physical activities to strengthen both body and mind."
             action={
               <button onClick={() => navigate("/workout")} className={`w-full py-4 rounded-xl font-bold transition-all ${isDark ? "bg-white/10 hover:bg-white/20 border border-white/10" : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"}`}>Start Session</button>
             }
           />
-
-          {/* Chatbot and Community at the Bottom */}
+s
           <HomeCard 
             isDark={isDark}
             icon={<MessageCircle className="text-indigo-400" />}
