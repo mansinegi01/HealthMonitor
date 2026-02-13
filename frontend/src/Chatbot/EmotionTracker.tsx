@@ -1,45 +1,68 @@
+
 import React from "react";
 import { motion } from "framer-motion";
+import type { ChatMessage, Emotion } from "./ChatTypes";
+import { emotionConfig } from "./ChatTypes";
 
 interface EmotionTrackerProps {
-  currentEmotion: string | null;
+  messages: ChatMessage[];
+  currentEmotion: Emotion | null;
 }
 
-const emotionStyles: Record<string, string> = {
-  happy: "bg-emerald-100 text-emerald-600",
-  sad: "bg-blue-100 text-blue-600",
-  anxious: "bg-yellow-100 text-yellow-600",
-  angry: "bg-red-100 text-red-600",
-  calm: "bg-teal-100 text-teal-600",
-  stressed: "bg-orange-100 text-orange-600",
-  hopeful: "bg-purple-100 text-purple-600",
-  neutral: "bg-gray-100 text-gray-600",
-};
+export function EmotionTracker({ messages, currentEmotion }: EmotionTrackerProps) {
+  const emotionHistory = messages
+    .filter((m) => m.role === "assistant" && m.emotion)
+    .map((m) => m.emotion!);
 
-export function EmotionTracker({ currentEmotion }: EmotionTrackerProps) {
-  if (!currentEmotion) return null;
+  if (emotionHistory.length === 0 && !currentEmotion) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex items-center justify-between px-6 py-3"
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      className="border-b border-border bg-card/50 backdrop-blur-sm px-4 py-3"
     >
-      <div className="text-sm text-gray-500">
-        Mood Journey
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0">
+            Mood Journey
+          </span>
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+            {emotionHistory.map((emotion, i) => {
+              const config = emotionConfig[emotion];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${config.colorClass}`}
+                  title={config.label}
+                >
+                  {config.emoji}
+                </motion.div>
+              );
+            })}
+            {currentEmotion && emotionHistory.length > 0 && (
+              <div className="w-px h-5 bg-border mx-1" />
+            )}
+            {currentEmotion && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted"
+              >
+                <span className="text-xs">
+                  {emotionConfig[currentEmotion].emoji}
+                </span>
+                <span className="text-xs font-medium text-foreground">
+                  {emotionConfig[currentEmotion].label}
+                </span>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
-
-      <motion.div
-        key={currentEmotion}
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 200 }}
-        className={`px-4 py-1.5 rounded-full text-sm font-medium shadow-sm ${
-          emotionStyles[currentEmotion] || "bg-gray-100 text-gray-600"
-        }`}
-      >
-        {currentEmotion.charAt(0).toUpperCase() + currentEmotion.slice(1)}
-      </motion.div>
     </motion.div>
   );
 }

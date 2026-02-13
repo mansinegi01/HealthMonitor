@@ -1,6 +1,7 @@
+
 import React from "react";
 import { motion } from "framer-motion";
-import { emotionConfig, Emotion } from "./ChatTypes";
+import { emotionConfig, type Emotion } from "./ChatTypes";
 
 interface EmotionBadgeProps {
   emotion: Emotion;
@@ -18,10 +19,10 @@ export function EmotionBadge({ emotion, size = "sm" }: EmotionBadgeProps) {
 
   return (
     <motion.span
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ type: "spring", stiffness: 400 }}
-      className={`inline-flex items-center gap-1.5 rounded-full font-medium ${config.colorClass} ${sizeClasses[size]}`}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+      className={`inline-flex items-center gap-1.5 rounded-full font-medium ${config.colorClass} text-foreground/90 ${sizeClasses[size]}`}
     >
       <span>{config.emoji}</span>
       <span>{config.label}</span>

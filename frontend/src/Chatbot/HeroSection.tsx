@@ -1,6 +1,8 @@
+
+
 import React from "react";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Brain, Shield } from "lucide-react";
+import { Heart, MessageCircle, Brain, Shield, User, Menu } from "lucide-react";
 
 interface HeroSectionProps {
   onStartChat: () => void;
@@ -8,64 +10,64 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartChat }: HeroSectionProps) {
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-b from-[#eef4f3] via-[#f8fbfa] to-[#ffffff] overflow-hidden">
-
-      {/* NAV */}
-      <nav className="flex items-center px-8 py-5 max-w-6xl mx-auto w-full">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-md">
-            <Heart className="w-5 h-5 text-white" />
+    // min-h-screen ensures it takes full height, but allows scrolling if content is tall
+    <div className="min-h-screen flex flex-col bg-[#f8fbfa] font-sans">
+      
+      {/* NAVBAR - Matches the new dark theme in your second image */}
+      <nav className="w-full bg-gradient-to-r from-[#1a1c2e] via-[#2a5fb1] to-[#0ea5e9] px-6 py-3 flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-2">
+          {/* Custom Logo Icon */}
+          <div className="w-8 h-8 bg-[#ff5722] rounded-full flex items-center justify-center p-1">
+             <div className="w-full h-full border-2 border-white rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-white rounded-full" />
+             </div>
           </div>
-          <span className="text-xl font-serif font-semibold text-gray-800">
-            MindfulAI
-          </span>
+          <span className="text-white font-bold text-xl tracking-tight">MindNest</span>
+        </div>
+        <div className="flex items-center gap-5 text-white">
+          <User className="w-6 h-6 cursor-pointer opacity-90 hover:opacity-100" />
+          <Menu className="w-7 h-7 cursor-pointer opacity-90 hover:opacity-100" />
         </div>
       </nav>
 
-      {/* MAIN CENTER SECTION */}
-      <div className="flex-1 flex flex-col justify-center items-center px-6">
-
-        {/* Orb */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative w-32 h-32 mb-8 mt-4"  // ↓ moved slightly down
-        >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-teal-300 to-emerald-400 opacity-30 blur-2xl animate-pulse" />
-          <div className="absolute inset-4 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 opacity-60 blur-md" />
-          <div className="absolute inset-8 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-xl">
-            <Heart className="w-10 h-10 text-white" />
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        
+        {/* REFINED ORB - Smaller and tighter to prevent vertical overflow */}
+        <div className="relative w-32 h-32 flex items-center justify-center mb-8">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#98d2c1] via-[#c2bed6] to-[#e0f2ee] blur-[30px] opacity-50" />
+          <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#4d9086] to-[#6a87a3] flex items-center justify-center shadow-lg">
+            <Heart className="w-7 h-7 text-white fill-current" />
           </div>
-        </motion.div>
+        </div>
 
-        {/* Title */}
-        <h1 className="text-5xl md:text-6xl font-serif font-bold text-gray-900 text-center leading-tight mb-6">
-          Your Safe Space for{" "}
-          <span className="bg-gradient-to-r from-teal-500 to-emerald-600 bg-clip-text text-transparent">
+        {/* HEADLINE - Scaled for better visibility */}
+        <div className="text-center mb-10">
+          <h1 className="text-5xl md:text-6xl font-serif font-bold text-[#334155] leading-tight">
+            Your Safe Space for
+          </h1>
+          <h2 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-[#4d8e84] via-[#6a87a3] to-[#9fa5c5] bg-clip-text text-transparent">
             Mental Wellness
-          </span>
-        </h1>
+          </h2>
+        </div>
 
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl text-gray-600 text-center max-w-2xl mb-10">
+        {/* SUBTITLE */}
+        <p className="text-[#64748b] text-center max-w-xl text-lg mb-10 leading-relaxed">
           An AI companion that understands your emotions, provides real-time
           support, and guides you toward mental clarity — 24/7, judgment-free.
         </p>
 
-        {/* CTA — perfectly centered */}
+        {/* CTA BUTTON */}
         <button
           onClick={onStartChat}
-          className="inline-flex items-center gap-3 px-9 py-4 rounded-full bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 mb-14"
+          className="flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-[#538e85] to-[#7c92b0] text-white font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 mb-20"
         >
-          <MessageCircle className="w-5 h-5" />
+          <MessageCircle className="w-5 h-5 fill-current" />
           Start a Conversation
         </button>
-      </div>
 
-      {/* CARDS — anchored at bottom */}
-      <div className="max-w-5xl mx-auto px-6 pb-10 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* FEATURE CARDS - Using a standard grid with bottom padding */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full pb-10">
           {[
             {
               icon: Brain,
@@ -85,17 +87,15 @@ export function HeroSection({ onStartChat }: HeroSectionProps) {
           ].map((feature) => (
             <div
               key={feature.title}
-              className="bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+              className="bg-white/60 backdrop-blur-md border border-[#edf2f1] rounded-[24px] p-8 shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center mb-4">
-                <feature.icon className="w-5 h-5 text-teal-600" />
+              <div className="w-12 h-12 rounded-xl bg-[#e6f1ef] flex items-center justify-center mb-6">
+                <feature.icon className="w-6 h-6 text-[#4d8e84]" />
               </div>
-
-              <h3 className="font-serif font-semibold text-gray-900 mb-2 text-lg">
+              <h3 className="font-serif font-bold text-[#334155] text-xl mb-3">
                 {feature.title}
               </h3>
-
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-[#64748b] text-sm leading-relaxed">
                 {feature.desc}
               </p>
             </div>

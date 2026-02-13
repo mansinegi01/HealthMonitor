@@ -1,3 +1,6 @@
+
+const { detectCrisis } = require("../utils/crisisDetector");
+
 const chat = async (req, res) => {
   try {
     const { messages } = req.body;
@@ -12,35 +15,38 @@ const chat = async (req, res) => {
       return res.status(500).json({ error: "Groq API key not configured" });
     }
 
-    const SYSTEM_PROMPT = `You are MindfulAI, a compassionate and empathetic mental health support assistant. Your role is to:
+    // 🔎 Get latest user message
+    const latestMessage = messages
+      .filter(msg => msg.role === "user")
+      .slice(-1)[0]?.content || "";
 
-1. EMOTION DETECTION: At the start of EVERY response, you MUST include an emotion tag in this exact format on its own line:
-[EMOTION: <emotion>]
-Where <emotion> is one of: happy, sad, anxious, angry, calm, neutral, hopeful, stressed
+    // 🚨 1️⃣ Crisis Detection Layer
+    const crisisResult = detectCrisis(latestMessage);
 
-Analyze the user's message carefully for emotional cues - word choice, tone, intensity, and context - to determine their current emotional state.
 
-2. SUPPORTIVE RESPONSES: After the emotion tag, provide a warm, empathetic, and helpful response. You should:
-- Validate the user's feelings without judgment
-- Offer evidence-based coping strategies (CBT techniques, mindfulness, grounding exercises)
-- Suggest actionable steps they can take right now
-- Use a warm, conversational tone - like a caring friend who also happens to be knowledgeable
-- Ask follow-up questions to better understand their situation
-- If someone expresses suicidal thoughts or severe crisis, always encourage them to contact emergency services or crisis hotlines (988 Suicide & Crisis Lifeline, Crisis Text Line: text HOME to 741741)
+    if (crisisResult.isCrisis) {
+      return res.json({
+        reply: `[EMOTION: sad]
 
-3. BOUNDARIES: 
-- You are NOT a replacement for professional therapy
-- Gently remind users to seek professional help when appropriate
-- Never diagnose conditions
-- Focus on emotional support, coping strategies, and psychoeducation
+I'm really sorry you're feeling this way. You matter, and you don't have to go through this alone.
 
-4. FORMATTING:
-- Use short paragraphs for readability
-- Use bullet points for lists of suggestions
-- Include a breathing exercise or grounding technique when the user seems distressed
-- Keep responses concise but thorough (2-4 paragraphs typically)
+If you're in immediate danger, please seek help right now.
 
-Remember: Your primary goal is to make the user feel heard, understood, and supported. Every interaction should leave them feeling a little better than before.`;
+📞 **India - Kiran Mental Health Helpline:** 1800-599-0019  
+📞 **AASRA:** +91-22-27546669  
+🌍 If outside India, contact your local emergency number.
+
+If you're comfortable, can you tell me what’s been feeling most overwhelming lately?`,
+        crisis: true
+      });
+    }
+
+    // 🧠 2️⃣ If Safe → Continue to Groq
+    const SYSTEM_PROMPT = `You are MindfulAI, a compassionate and empathetic mental health support assistant...
+
+(keep your full existing system prompt here unchanged)
+`;
+
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -57,7 +63,6 @@ Remember: Your primary goal is to make the user feel heard, understood, and supp
           ],
           temperature: 0.7,
           max_tokens: 800
-          // ❌ NO stream:true
         }),
       }
     );
@@ -69,10 +74,9 @@ Remember: Your primary goal is to make the user feel heard, understood, and supp
     }
 
     const data = await response.json();
-
     const reply = data.choices[0].message.content;
 
-    return res.json({ reply });
+    return res.json({ reply, crisis: false });
 
   } catch (error) {
     console.error("Chat Controller Error:", error);
