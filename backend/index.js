@@ -13,6 +13,7 @@ const userPostsRoutes = require("./routes/userPosts");
 const userMoodRoutes = require("./routes/userMoodRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes")
 const feedbackRoutes  = require("./routes/feedbackRoutes");
+const moodRoutes = require("./routes/moodRoutes")
 
 const app = express();
 const port = process.env.PORT;
@@ -31,6 +32,7 @@ app.use("/api/health", restrictUser, userHealthRoutes);
 app.use("/api/notes", restrictUser, userNotesRoutes);
 app.use("/api/posts", restrictUser, userPostsRoutes);
 app.use("/api/mood", restrictUser, userMoodRoutes);
+app.use("/api/mood", restrictUser, moodRoutes);
 app.use("/api/feedback", feedbackRoutes);
 
 app.listen(port, () => {
