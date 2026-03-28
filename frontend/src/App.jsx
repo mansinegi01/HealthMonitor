@@ -237,13 +237,14 @@ import Workout from "./QuickActioons/Workout";
 import Report from "./Report/Report";
 import DailyCheckIn from "./DailyCheckIn/DailyCheckIn";
 import FinalReport from "./FinalReport/FinalReport";
-
+import Engagement from "./EngagementPrograms/Engagement";
 // Therapies
 import Audio from "./Therapies/Audio";
 import Consult from "./Therapies/Consult";
 import Reading from "./Therapies/Reading";
 import Talking from "./Therapies/Talking";
 import Yoga from "./Therapies/Yoga";
+import BrainScanChecker from "./BrainScanChecker";
 
 // Chatbot
 import ChatbotIndex from "./Chatbot/Index";
@@ -260,8 +261,15 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="final-report" element={<FinalReport />} />
-
         {/* Protected Routes */}
+        <Route 
+        path="/engagement"
+       element={<ProtectedRoute>
+                  <Engagement />
+                </ProtectedRoute>
+              }
+           />
+
         <Route
           path="home"
           element={
@@ -410,6 +418,15 @@ function App() {
         />
 
       </Route>
+      
+      <Route
+        path="brain-scan"
+        element={
+          <ProtectedRoute>
+            <BrainScanChecker />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
