@@ -1,41 +1,30 @@
 
-// const jwt = require("jsonwebtoken");
-// const secret = "mysecret"; 
-
-// function setUser(user) {
-//   return jwt.sign({ id: user._id, email: user.email }, secret, { expiresIn: "1d" });
-// }
-
-// function getUser(token) {
-//   try {
-//     return jwt.verify(token, secret);
-//   } catch {
-//     return null;
-//   }
-// }
+// const { getUser } = require('../services/auth');
 
 // function restrictUser(req, res, next) {
-//   const token = req.cookies?.uid || req.headers["authorization"]?.split(" ")[1];
+//   const token = req.cookies.uid;
+
 //   if (!token) {
-//     return res.status(401).json({ message: "No token found" });
+//     return res.status(401).json({ message: "Unauthorized" });
 //   }
 
 //   const user = getUser(token);
+
 //   if (!user) {
-//     return res.status(401).json({ message: "Invalid or expired token" });
+//     return res.status(401).json({ message: "Invalid token" });
 //   }
 
 //   req.user = user;
 //   next();
 // }
 
-// module.exports = { setUser, getUser, restrictUser };
-const { getUser } = require("../utils/jwt");
+// module.exports = { restrictUser };
+const { getUser } = require("../services/auth");
 
 function restrictUser(req, res, next) {
-  const token =
-    req.cookies?.uid ||
-    req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.uid;
+
+  console.log("COOKIE TOKEN:", token); // 🔥 DEBUG
 
   if (!token) {
     return res.status(401).json({ message: "No token found" });
@@ -47,7 +36,7 @@ function restrictUser(req, res, next) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 
-  req.user = user; // ✅ GUARANTEED
+  req.user = user;
   next();
 }
 

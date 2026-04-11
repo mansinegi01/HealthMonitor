@@ -15,25 +15,26 @@
 // }
 
 // module.exports = { setUser, getUser };
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
+// ✅ CREATE TOKEN
 function setUser(user) {
   return jwt.sign(
     {
       id: user._id,
-      anonId: user.anonId
+      email: user.email
     },
     process.env.JWT_SECRET,
     { expiresIn: "1d" }
   );
 }
 
+// ✅ VERIFY TOKEN
 function getUser(token) {
-  if (!token) return null;
-
   try {
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
+    console.log("JWT ERROR:", err.message); // 🔥 DEBUG
     return null;
   }
 }
