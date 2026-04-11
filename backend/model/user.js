@@ -1,21 +1,46 @@
+// const mongoose = require('mongoose');
+
+// const userSchema = mongoose.Schema({
+//     name : {
+//         type : String,
+//         required : true
+//     },
+//     email : {
+//         type : String,
+//         required : true,
+//         unique : true
+//     },
+//     password : {
+//         type : String,
+//         required : true
+//     }
+// });
+// const userData = mongoose.model("userData",userSchema);
+// module.exports = userData;
+
+
 const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
-    name : {
-        type : String,
-        required : true
-    },
-    email : {
-        type : String,
-        required : true,
-        unique : true
-    },
-    password : {
-        type : String,
-        required : true
-    }
-});
-const userData = mongoose.model("userData",userSchema);
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  anonId: {
+    type: String,
+    unique: true
+  }
+}, { timestamps: true });
+
+const userData = mongoose.model("userData", userSchema);
+
 module.exports = userData;
-
-
