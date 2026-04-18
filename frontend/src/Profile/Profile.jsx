@@ -568,13 +568,26 @@ const Profile = () => {
             <button
               onClick={async () => {
                 const token = localStorage.getItem("token");
-                await axios.get(
-                  "http://localhost:8000/api/mood/report",
-                  {
-                    headers: { Authorization: `Bearer ${token}` }
-                  }
-                );
-                alert("Report Generated Successfully!");
+
+                try {
+                  const response = await axios.get(
+                    "http://localhost:8000/api/mood/report",
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                      responseType: "blob"
+                    }
+                  );
+
+                  const url = window.URL.createObjectURL(new Blob([response.data]));
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.setAttribute("download", "mood-report.pdf");
+                  document.body.appendChild(link);
+                  link.click();
+
+                } catch (err) {
+                  console.error("Download failed", err);
+                }
               }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2b4b] text-white rounded-2xl font-bold hover:bg-black transition-all"
             >
