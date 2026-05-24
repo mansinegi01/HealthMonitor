@@ -464,7 +464,7 @@ const Community = () => {
               >
                 {getInitials(post.user)}
               </div>
-
+-[]
               {/* 🔒 NO FULL NAME
               <p style={{ margin: 0, fontWeight: "bold" }}>
                 User

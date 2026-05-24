@@ -185,13 +185,13 @@ export function ChatInterface() {
               />
 
               {/* RESTORED: Feedback Button (visible on mobile/sm if needed) */}
-              <button
+              {/* <button
                 type="button"
                 onClick={() => setShowFeedback(true)}
                 className="hidden sm:block px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-slate-50 border border-slate-200 text-slate-500 rounded-full hover:border-teal-400 hover:text-teal-600 transition-all shrink-0"
               >
                 Feedback
-              </button>
+              </button> */}
 
               <button 
                 type="submit" 
