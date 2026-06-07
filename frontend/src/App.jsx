@@ -36,8 +36,9 @@ import BrainScanChecker from "./BrainScanChecker";
 
 // Chatbot
 import ChatbotIndex from "./Chatbot/Index";
-
+import useMedicationNotifications from "./hooks/useMedicationNotification";
 function App() {
+  useMedicationNotifications();
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
