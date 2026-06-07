@@ -348,7 +348,7 @@ function Signup() {
       const data = await response.json();
       if (response.status === 201) {
         setCurrentStep(3);
-        setTimeout(() => navigate("/question"), 800);
+        setTimeout(() => navigate("/login"), 800);
       } else if (response.status === 409) {
         setError("Email already exists. Please login or use a different email.");
       } else {
